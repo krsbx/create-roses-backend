@@ -41,6 +41,7 @@ export const PACKAGES = {
   },
   DEV_DEPEDENCIES: {
     BCRYPT: '@types/bcrypt',
+    CORS: '@types/cors',
     EXPRESS: '@types/express',
     JSONWEBTOKEN: '@types/jsonwebtoken',
     LODASH: '@types/lodash',
@@ -49,5 +50,72 @@ export const PACKAGES = {
     PRISMA: 'prisma',
     TS_NODE: 'ts-node',
     TYPESCRIPT: 'typescript',
+  },
+};
+
+export const ENV = `
+PORT=
+SALT=
+JWT_SECRET=
+
+# This was inserted by \`prisma init\`:
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB (Preview) and CockroachDB (Preview).
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL=\${DB_TYPE}://\${DB_USER}:\${DB_PASSWORD}@\${DB_HOST}:\${DB_PORT}/\${DB_NAME}?schema=\${DB_SCHEMA}
+DB_USER=
+DB_TYPE=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=
+DB_NAME=
+DB_SCHEMA=
+`;
+
+export const GIT_IGNORE = `
+node_modules
+
+# Keep environment variables out of version control
+.env
+.env.local
+.env.production
+`;
+
+export const DIRECTORY_STRUCTURE = {
+  src: 'src',
+  middleware: 'src/middleware',
+  repository: 'src/repository',
+  utils: 'src/utils',
+};
+
+export const SCRIPTS = {
+  RUN_DEV: {
+    name: 'dev',
+    script: 'nodemon src/index.ts',
+  },
+  MIGRATE: {
+    name: 'migrate',
+    script: 'prisma migrate dev',
+  },
+  CREATE_MIGRATE: {
+    name: 'migrate:create',
+    script: 'prisma migrate dev --name',
+  },
+  RESET_MIGRATE: {
+    name: 'migrate:reset',
+    script: 'prisma migrate reset',
+  },
+  SEED: {
+    name: 'seed',
+    script: 'prisma db seed',
+  },
+} as const;
+
+export const PRSIMA = {
+  prisma: {
+    seed: 'ts-node prisma/seed/index.ts',
   },
 };
