@@ -1,1 +1,5 @@
 node_modules
+dist
+
+# The test folder for creating a new project
+@krsbx/crb

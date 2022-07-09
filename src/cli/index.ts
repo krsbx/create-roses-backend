@@ -1,12 +1,13 @@
+import chalk from 'chalk';
 import { Command } from 'commander';
-import { version } from '../../package.json';
-import { CREATE_ROSES_BACKEND, DEFAULT_CLI_OPTIONS } from '../utils/constants';
+import { COLOR_SCHEME, CREATE_ROSES_BACKEND, DEFAULT_CLI_OPTIONS } from '../utils/constants';
+import getAllPrompts from './prompt';
 import checkVersion from './version';
 
 const runCli = async () => {
   checkVersion();
 
-  const cliResult = DEFAULT_CLI_OPTIONS;
+  const cliResults = DEFAULT_CLI_OPTIONS;
   const program = new Command().name(CREATE_ROSES_BACKEND);
 
   program
@@ -14,15 +15,35 @@ const runCli = async () => {
     .argument('[dir]', 'The directory to create the new Roses Backend in')
     .option('--noGit', 'Explicitly tell to not init a git repository', false)
     .option('--noInstall', 'Explicitly tell to not install all dependencies', false)
-    .version(version, '-v, --version', 'Display the current version of CRB')
+    .option('-y, --default', 'Use default values for all prompts', false)
+    .version('v1', '-v, --version', 'Display the current version of CRB')
+    .addHelpText(
+      'afterAll',
+      `\n\nThis backend is used in most of ${chalk
+        .hex(COLOR_SCHEME.BRIGHT_ORANGE)
+        .bold('KRSBX')} services`
+    )
     .parse(process.argv);
 
   const cliProjectName = program.args[0];
-  if (cliProjectName) cliResult.appName = cliProjectName;
+  if (cliProjectName) cliResults.appName = cliProjectName;
 
-  cliResult.flags = program.opts();
+  cliResults.flags = program.opts();
 
-  return cliResult;
+  try {
+    if (!cliResults.flags.default) {
+      await getAllPrompts(cliResults);
+    }
+  } catch (err) {
+    if (err instanceof Error && (err as any).isTTYError) {
+      console.log(`${CREATE_ROSES_BACKEND} needs an interactive terminal to provide options`);
+      console.log(`Bootstrapping a default t3 app in ./${cliResults.appName}`);
+    } else {
+      throw err;
+    }
+  }
+
+  return cliResults;
 };
 
 export default runCli;
