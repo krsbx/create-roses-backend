@@ -1,10 +1,10 @@
 export const userRepository = `import _ from 'lodash';
 import { Prisma } from '@prisma/client';
 import { hashText } from '../utils/encryption';
-import BaseRepository, { ModelStructure } from './baseRepository';
+import factory, { ModelStructure } from './baseRepository';
 import { AnyRecord } from '../utils/interface';
 
-const userRepository = new BaseRepository<
+const userRepository = factory<
   Prisma.UserWhereInput,
   Prisma.UserSelect,
   Prisma.UserInclude,

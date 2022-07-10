@@ -155,5 +155,8 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
   }
 }
 
-export default BaseRepository;
+const factory = <Where, Select, Include, Create, Update, Cursor, Order>(model: ModelName) =>
+  new BaseRepository<Where, Select, Include, Create, Update, Cursor, Order>(model);
+
+export default factory;
 `;
