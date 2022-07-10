@@ -2,10 +2,10 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import { execAsync } from './common';
-import { PACKAGES, GIT_IGNORE, SCRIPTS } from './constants';
+import { PACKAGES, GIT_IGNORE, SCRIPTS, DESCRIPTIONS } from './constants';
 import { CliFlags } from './interfaces';
 
-export const initializeProject = async (appName: string, projectDir: string) => {
+export const initializeDirectory = async (appName: string, projectDir: string) => {
   if (fs.existsSync(projectDir)) {
     if (fs.readdirSync(projectDir).length === 0) {
       console.log(`${appName} exists but is empty, continuing...\n`);
@@ -18,11 +18,12 @@ export const initializeProject = async (appName: string, projectDir: string) => 
       });
 
       if (!overwriteDir) {
+        console.log(`${chalk.red('Exiting')}...`);
         process.exit(0);
-      } else {
-        console.log(`Emptying ${appName} and creating CRB...\n`);
-        fs.emptyDirSync(projectDir);
       }
+
+      console.log(`Emptying ${appName} and creating CRB...\n`);
+      fs.emptyDirSync(projectDir);
     }
   } else {
     fs.mkdirpSync(projectDir);
@@ -33,6 +34,7 @@ export const initializeProject = async (appName: string, projectDir: string) => 
   const packageJson = JSON.parse(fs.readFileSync(`${projectDir}/package.json`, 'utf8'));
 
   packageJson.name = appName;
+  packageJson.description = DESCRIPTIONS;
 
   await fs.writeFile(`${projectDir}/package.json`, JSON.stringify(packageJson, null, 2));
 };

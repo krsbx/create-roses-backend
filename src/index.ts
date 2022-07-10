@@ -4,8 +4,6 @@ import runCli from './cli';
 import renderTitle from './cli/title';
 import createProject from './templates';
 import initializeExpress from './templates/express';
-import initializePrisma from './templates/prisma';
-import { addScripts } from './utils/initializer';
 
 const main = async () => {
   renderTitle();
@@ -14,11 +12,7 @@ const main = async () => {
 
   const projectDir = await createProject(appName, flags);
 
-  await initializeExpress(projectDir);
-
-  await addScripts(projectDir);
-
-  await initializePrisma(projectDir);
+  await initializeExpress(projectDir, flags);
 
   console.log(`Project created at ${projectDir}`);
 };

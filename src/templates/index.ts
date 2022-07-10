@@ -1,16 +1,19 @@
 import path from 'path';
 import { getPackageManager } from '../utils/common';
-import { addPackages, initializeGit, initializeProject } from '../utils/initializer';
+import { addPackages, addScripts, initializeGit, initializeDirectory } from '../utils/initializer';
 import { CliFlags } from '../utils/interfaces';
 
 const createProject = async (appName: string, flags: CliFlags) => {
   const packageManager = getPackageManager();
   const projectDir = path.resolve(process.cwd(), appName);
 
-  await initializeProject(appName, projectDir);
-  await addPackages(projectDir, packageManager, flags);
+  await initializeDirectory(appName, projectDir);
 
-  if (!flags.noGit) await initializeGit(projectDir);
+  await Promise.all([
+    addPackages(projectDir, packageManager, flags),
+    addScripts(projectDir),
+    !flags.noGit ? initializeGit(projectDir) : Promise.resolve(),
+  ]);
 
   return projectDir;
 };

@@ -8,12 +8,17 @@ export const DEFAULT_APP_NAME = 'my-roses-backend';
 
 export const CREATE_ROSES_BACKEND = 'create-roses-backend';
 
+export const DESCRIPTIONS = `Project created with ${CREATE_ROSES_BACKEND}`;
+
 export const DEFAULT_CLI_OPTIONS: CliResults = {
   appName: DEFAULT_APP_NAME,
   flags: {
     noInstall: false,
     noGit: false,
     default: false,
+    withFile: false,
+    withUser: false,
+    withTemplate: false,
   },
 };
 
