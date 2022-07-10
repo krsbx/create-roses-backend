@@ -120,7 +120,5 @@ export const SCRIPTS = {
 } as const;
 
 export const PRSIMA = {
-  prisma: {
-    seed: 'ts-node prisma/seed/index.ts',
-  },
+  seed: 'ts-node prisma/seed/index.ts',
 };

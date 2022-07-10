@@ -4,7 +4,8 @@ export const imports = {
 };
 
 export const seeder = {
-  start: 'const main = async () => {',
+  start: `const main = async () => {
+  // Create seed data here`,
   user: 'await user(prisma);',
   end: `}
   

@@ -1,5 +1,6 @@
 export const imports = {
-  lodash: "import _ from 'lodash';",
+  lodash: `/* eslint-disable @typescript-eslint/ban-ts-comment */
+import _ from 'lodash';`,
   client: {
     start: 'import { PrismaClient, Prisma,',
     user: 'User,',

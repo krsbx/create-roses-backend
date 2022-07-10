@@ -23,10 +23,10 @@ const createBaseRepository = async (projectDir: string, flags: CliFlags) => {
   let repo = '';
 
   repo += `${baseRepository.imports.lodash}\n`;
-  repo += `${baseRepository.imports.client.start}\n`;
+  repo += `${baseRepository.imports.client.start}`;
 
-  if (flags.withUser) repo += `${baseRepository.imports.client.user}\n`;
-  if (flags.withFile) repo += `${baseRepository.imports.client.file}\n`;
+  if (flags.withUser) repo += ` ${baseRepository.imports.client.user}`;
+  if (flags.withFile) repo += ` ${baseRepository.imports.client.file}`;
 
   repo += `${baseRepository.imports.client.end}\n`;
   repo += `${baseRepository.imports.interface}\n\n`;
@@ -61,7 +61,9 @@ const createRepository = async (projectDir: string, flags: CliFlags) => {
   if (flags.withUser) repo += `  ${repositories.repository.user}\n`;
   if (flags.withFile) repo += `  ${repositories.repository.file}\n`;
 
-  repo += `${repositories.repository.end}\n\n`;
+  if (flags.withUser || flags.withFile) repo += `\n`;
+
+  repo += `${repositories.repository.end}\n`;
 
   await fs.writeFile(`${projectDir}/src/repository/index.ts`, repo);
 };
@@ -109,8 +111,8 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
 
   root += `  ${roots.exporter.middleware.queryParser}\n`;
 
-  if (flags.withUser) root += `  ${roots.exporter.middleware.users}`;
-  if (flags.withFile) root += `  ${roots.exporter.middleware.files}`;
+  if (flags.withUser) root += `  ${roots.exporter.middleware.users}\n`;
+  if (flags.withFile) root += `  ${roots.exporter.middleware.files}\n`;
 
   root += `${roots.exporter.end}\n`;
 

@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import { execAsync } from './common';
-import { PACKAGES, GIT_IGNORE, SCRIPTS, DESCRIPTIONS } from './constants';
+import { PACKAGES, GIT_IGNORE, SCRIPTS, DESCRIPTIONS, PRSIMA } from './constants';
 import { CliFlags } from './interfaces';
 
 export const initializeDirectory = async (appName: string, projectDir: string) => {
@@ -23,18 +23,19 @@ export const initializeDirectory = async (appName: string, projectDir: string) =
       }
 
       console.log(`Emptying ${appName} and creating CRB...\n`);
-      fs.emptyDirSync(projectDir);
+      await fs.emptyDir(projectDir);
     }
   } else {
-    fs.mkdirpSync(projectDir);
+    await fs.mkdirp(projectDir);
   }
 
   await execAsync('npm init -y', { cwd: projectDir });
 
-  const packageJson = JSON.parse(fs.readFileSync(`${projectDir}/package.json`, 'utf8'));
+  const packageJson = JSON.parse(await fs.readFile(`${projectDir}/package.json`, 'utf8'));
 
   packageJson.name = appName;
   packageJson.description = DESCRIPTIONS;
+  packageJson.prisma = PRSIMA;
 
   await fs.writeFile(`${projectDir}/package.json`, JSON.stringify(packageJson, null, 2));
 };
