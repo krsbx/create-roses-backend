@@ -1,5 +1,5 @@
 export const imports = {
-  express: "import express from 'express';",
+  express: "import express, { Express } from 'express';",
   cors: "import cors from 'cors';",
   auth: "import authsRoutes from '../routes/auths';",
   user: "import usersRoutes from '../routes/users';",

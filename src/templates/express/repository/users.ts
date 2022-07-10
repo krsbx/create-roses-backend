@@ -7,7 +7,7 @@ import { AnyRecord } from '../utils/interface';
 const userRepository = factory<
   Prisma.UserWhereInput,
   Prisma.UserSelect,
-  Prisma.UserInclude,
+  unknown, // Change this to \`Prisma.UserInclude\` if you want to include related models
   Prisma.UserCreateInput,
   Prisma.UserUpdateInput,
   Prisma.UserWhereUniqueInput,

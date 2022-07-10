@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import { execAsync } from './common';
-import { PACKAGES, GIT_IGNORE, SCRIPTS, DESCRIPTIONS, PRSIMA } from './constants';
+import { PACKAGES, GIT_IGNORE, SCRIPTS } from './constants';
 import { CliFlags } from './interfaces';
 
 export const initializeDirectory = async (appName: string, projectDir: string) => {
@@ -93,14 +93,4 @@ export const addScripts = async (projectDir: string) => {
   );
 
   console.log('Scripts added successfully.');
-};
-
-export const modifiedPackageJson = async (projectDir: string, appName: string) => {
-  const packageJson = JSON.parse(await fs.readFile(`${projectDir}/package.json`, 'utf8'));
-
-  packageJson.name = appName;
-  packageJson.description = DESCRIPTIONS;
-  packageJson.prisma = PRSIMA;
-
-  await fs.writeFile(`${projectDir}/package.json`, JSON.stringify(packageJson, null, 2));
 };

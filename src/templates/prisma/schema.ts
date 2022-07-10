@@ -17,9 +17,9 @@ export const user = {
 export const file = {
   model: `model File {
   id            Int       @id @default(autoincrement())
-  name          String
-  originalName  String
   path          String
+  filename      String
+  extension     String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }`,

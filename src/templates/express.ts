@@ -2,15 +2,18 @@ import fs from 'fs-extra';
 import { DIRECTORY_STRUCTURE } from '../utils/constants';
 import { express } from './express/index';
 import { queryParserMw } from './express/middleware/queryParser';
-import { usersMw } from './express/middleware/user';
+import { usersMw } from './express/middleware/users';
+import { filesMw } from './express/middleware/files';
 import { authRoutes } from './express/routes/auths';
+import { fileRoutes } from './express/routes/files';
 import { userRoutes } from './express/routes/users';
 import { token } from './express/utils/token';
+import { fileMulter } from './express/utils/files';
 import * as roots from './express/utils/root';
 import * as repositories from './express/repository/index';
 import * as baseRepository from './express/repository/baseRepository';
-import { userRepository } from './express/repository/user';
-import { fileRepository } from './express/repository/file';
+import { userRepository } from './express/repository/users';
+import { fileRepository } from './express/repository/files';
 import { interfaces } from './express/utils/interface';
 import { encryption } from './express/utils/encryption';
 import { constants } from './express/utils/constants';
@@ -71,15 +74,23 @@ const createRepository = async (projectDir: string, flags: CliFlags) => {
   await fs.writeFile(`${projectDir}/src/repository/index.ts`, repo);
 };
 
+const createConstants = async (projectDir: string, flags: CliFlags) => {
+  let constant = '';
+
+  if (flags.withUser) constant += constants.user;
+  if (flags.withFile) constant += constants.file;
+
+  await fs.writeFile(`${projectDir}/src/utils/constant.ts`, constant);
+};
+
 const createUserTemplate = async (projectDir: string) => {
   console.log(`Creating user template...`);
 
   await Promise.all([
     fs.writeFile(`${projectDir}/src/middleware/users.ts`, usersMw),
-    fs.writeFile(`${projectDir}/src/repository/user.ts`, userRepository),
+    fs.writeFile(`${projectDir}/src/repository/users.ts`, userRepository),
     fs.writeFile(`${projectDir}/src/routes/auths.ts`, authRoutes),
     fs.writeFile(`${projectDir}/src/routes/users.ts`, userRoutes),
-    fs.writeFile(`${projectDir}/src/utils/constant.ts`, constants.user),
     fs.writeFile(`${projectDir}/src/utils/encryption.ts`, encryption),
     fs.writeFile(`${projectDir}/src/utils/token.ts`, token),
   ]);
@@ -90,7 +101,12 @@ const createUserTemplate = async (projectDir: string) => {
 const createFileTemplate = async (projectDir: string) => {
   console.log(`Creating file template...`);
 
-  await Promise.all([fs.writeFile(`${projectDir}/src/repository/file.ts`, fileRepository)]);
+  await Promise.all([
+    fs.writeFile(`${projectDir}/src/middleware/files.ts`, filesMw),
+    fs.writeFile(`${projectDir}/src/repository/files.ts`, fileRepository),
+    fs.writeFile(`${projectDir}/src/routes/files.ts`, fileRoutes),
+    fs.writeFile(`${projectDir}/src/utils/files.ts`, fileMulter),
+  ]);
 
   console.log(`File template created.`);
 };
@@ -106,7 +122,7 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
     root += `${roots.imports.auth}\n`;
     root += `${roots.imports.user}\n`;
   }
-  // if (flags.withFile) root += `${roots.imports.file}\n`;
+  if (flags.withFile) root += `${roots.imports.file}\n`;
 
   root += `\n`;
 
@@ -122,7 +138,7 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
     root += `  ${roots.exporter.middleware.auth}\n`;
     root += `  ${roots.exporter.middleware.users}\n`;
   }
-  // if (flags.withFile) root += `  ${roots.exporter.middleware.files}\n`;
+  if (flags.withFile) root += `  ${roots.exporter.middleware.files}\n`;
 
   root += `${roots.exporter.end}\n`;
 
@@ -140,6 +156,7 @@ const initializeExpress = async (projectDir: string, flags: CliFlags) => {
     createExpressRoot(projectDir, flags),
     createBaseRepository(projectDir, flags),
     createRepository(projectDir, flags),
+    createConstants(projectDir, flags),
     flags.withUser ? createUserTemplate(projectDir) : Promise.resolve(),
     flags.withFile ? createFileTemplate(projectDir) : Promise.resolve(),
   ]);

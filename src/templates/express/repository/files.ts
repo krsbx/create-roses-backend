@@ -1,12 +1,12 @@
 export const fileRepository = `import _ from 'lodash';
 import { Prisma } from '@prisma/client';
-import BaseRepository, { ModelStructure } from './baseRepository';
+import factory, { ModelStructure } from './baseRepository';
 import { AnyRecord } from '../utils/interface';
 
-const filesRepository = new BaseRepository<
+const filesRepository = factory<
   Prisma.FileWhereInput,
   Prisma.FileSelect,
-  Prisma.FileInclude,
+  unknown, // Change this to \`Prisma.FileInclude\` if you want to include related models
   Prisma.FileCreateInput,
   Prisma.FileUpdateInput,
   Prisma.FileWhereUniqueInput,

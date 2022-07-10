@@ -5,8 +5,8 @@ import renderTitle from './cli/title';
 import createProject from './templates';
 import initializeExpress from './templates/express';
 import initializePrisma from './templates/prisma';
-import { commitChanges } from './utils/common';
-import { modifiedPackageJson } from './utils/initializer';
+import { commitChanges, modifyPackageJson, removeGitIgnore } from './utils/common';
+import { initializeGit } from './utils/initializer';
 
 const main = async () => {
   renderTitle();
@@ -18,9 +18,14 @@ const main = async () => {
   await initializeExpress(projectDir, flags);
   await initializePrisma(projectDir, flags);
 
-  if (!flags.noGit) await commitChanges(projectDir);
+  if (!flags.noGit) {
+    await initializeGit(projectDir);
+    await commitChanges(projectDir);
+  } else {
+    await removeGitIgnore(projectDir);
+  }
 
-  await modifiedPackageJson(projectDir, appName);
+  await modifyPackageJson(projectDir, appName);
 
   console.log(`Project created at ${projectDir}`);
 };

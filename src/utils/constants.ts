@@ -43,6 +43,7 @@ export const PACKAGES = {
     JSONWEBTOKEN: 'jsonwebtoken',
     LODASH: 'lodash',
     MOMENT: 'moment',
+    MULTER: 'multer',
   },
   DEV_DEPEDENCIES: {
     BCRYPT: '@types/bcrypt',
@@ -50,6 +51,7 @@ export const PACKAGES = {
     EXPRESS: '@types/express',
     JSONWEBTOKEN: '@types/jsonwebtoken',
     LODASH: '@types/lodash',
+    MULTER: '@types/multer',
     NODE: '@types/node',
     NODEMON: 'nodemon',
     PRISMA: 'prisma',
@@ -58,8 +60,7 @@ export const PACKAGES = {
   },
 };
 
-export const ENV = `
-PORT=
+export const ENV = `PORT=
 SALT=
 JWT_SECRET=
 
@@ -80,8 +81,7 @@ DB_NAME=
 DB_SCHEMA=
 `;
 
-export const GIT_IGNORE = `
-node_modules
+export const GIT_IGNORE = `node_modules
 
 # Keep environment variables out of version control
 .env
