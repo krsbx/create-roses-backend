@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { COLOR_SCHEME, CREATE_ROSES_BACKEND, DEFAULT_CLI_OPTIONS } from '../utils/constants';
+import logger from '../utils/logger';
 import getAllPrompts from './prompt';
 import checkVersion from './version';
 
@@ -47,8 +48,8 @@ const runCli = async () => {
     }
   } catch (err) {
     if (err instanceof Error && (err as any).isTTYError) {
-      console.log(`${CREATE_ROSES_BACKEND} needs an interactive terminal to provide options`);
-      console.log(`Bootstrapping a default CRB app in ./${cliResults.appName}`);
+      logger.error(`${CREATE_ROSES_BACKEND} needs an interactive terminal to provide options`);
+      logger.error(`Bootstrapping a default CRB app in ./${cliResults.appName}`);
     } else {
       throw err;
     }

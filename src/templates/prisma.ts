@@ -1,3 +1,5 @@
+import ora from 'ora';
+import chalk from 'chalk';
 import fs from 'fs-extra';
 import { execAsync } from '../utils/common';
 import * as seeds from './prisma/seed/index';
@@ -6,9 +8,10 @@ import { prismaInstance } from './prisma/seed/instance';
 import { CliFlags } from '../utils/interfaces';
 import { ENV } from '../utils/constants';
 import { userSeeder } from './prisma/seed/user';
+import logger from '../utils/logger';
 
 const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
-  console.log('Creating prisma seeds...');
+  const spinner = ora('Creating prisma seeds...\n').start();
 
   let seed = '';
 
@@ -19,66 +22,76 @@ const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
   if (flags.withUser) seed += `  ${seeds.seeder.user}\n`;
   seed += `${seeds.seeder.end}\n`;
 
-  await Promise.all([
-    fs.writeFile(`${projectDir}/prisma/seed/index.ts`, seed),
-    fs.writeFile(`${projectDir}/prisma/seed/user.ts`, userSeeder),
-  ]);
+  try {
+    await Promise.all([
+      fs.writeFile(`${projectDir}/prisma/seed/index.ts`, seed),
+      fs.writeFile(`${projectDir}/prisma/seed/user.ts`, userSeeder),
+    ]);
 
-  console.log('Prisma seeds created.');
+    spinner.succeed(chalk.green.bold('Prisma seeds created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Prisma seeds creation failed.'));
+  }
 };
 
 const createPrismaSeedInstance = async (projectDir: string) => {
-  console.log('Creating prisma seed instance...');
+  const spinner = ora('Creating prisma seed instance...\n').start();
 
-  await fs.writeFile(`${projectDir}/prisma/seed/instance.ts`, prismaInstance);
+  try {
+    await fs.writeFile(`${projectDir}/prisma/seed/instance.ts`, prismaInstance);
 
-  console.log('Prisma seed instance created.');
+    spinner.succeed(chalk.green.bold('Prisma seed instance created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Prisma seed instance creation failed.'));
+  }
 };
 
 const createPrismaSchema = async (projectDir: string, flags: CliFlags) => {
+  if (!flags.withUser && !flags.withFile) return;
+
   let schemaFile = await fs.readFile(`${projectDir}/prisma/schema.prisma`, 'utf8');
 
   if (flags.withUser) {
-    console.log('Adding prisma user schema...');
-
     schemaFile += `\n\n${schema.user.role}\n`;
     schemaFile += `\n\n${schema.user.model}\n`;
-
-    console.log('Prisma schema user added.');
   }
 
   if (flags.withFile) {
-    console.log('Adding prisma file schema...');
-
     schemaFile += `\n\n${schema.file.model}\n`;
-
-    console.log('Prisma schema file added.');
   }
 
-  await fs.writeFile(`${projectDir}/prisma/schema.prisma`, schemaFile);
+  const spinner = ora('Creating prisma schema from selected template...\n').start();
+  try {
+    await fs.writeFile(`${projectDir}/prisma/schema.prisma`, schemaFile);
+
+    spinner.succeed(chalk.green.bold('Prisma schema created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Prisma schema creation failed.'));
+  }
 };
 
 const initializePrisma = async (projectDir: string, flags: CliFlags) => {
-  console.log('Initializing Prisma...');
+  const spinner = ora('Initializing prisma...').start();
 
-  await execAsync(`npx prisma init`, { cwd: projectDir });
+  try {
+    await execAsync(`npx prisma init`, { cwd: projectDir });
 
-  await fs.mkdirp(`${projectDir}/prisma/seed`);
+    await fs.mkdirp(`${projectDir}/prisma/seed`);
 
-  await Promise.all([
-    createPrismaSchema(projectDir, flags),
-    createPrismaSeedInstance(projectDir),
-    createPrismaSeeds(projectDir, flags),
+    await Promise.all([
+      createPrismaSchema(projectDir, flags),
+      createPrismaSeedInstance(projectDir),
+      createPrismaSeeds(projectDir, flags),
 
-    // Create .env file
-    fs.writeFile(`${projectDir}/.env`, ENV),
-    fs.writeFile(`${projectDir}/.env.example`, ENV),
-  ]);
+      // Create .env file
+      fs.writeFile(`${projectDir}/.env`, ENV),
+      fs.writeFile(`${projectDir}/.env.example`, ENV),
+    ]);
 
-  console.log('Prisma initialized.');
-
-  console.log('Run `npm run migrate -- [name]` to create the database migrations.');
-  console.log('Run `npm run seed` to seed the database.');
+    spinner.succeed(chalk.green.bold('Prisma initialized.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Prisma initialization failed.'));
+  }
 };
 
 export default initializePrisma;

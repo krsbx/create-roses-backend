@@ -1,12 +1,14 @@
 import inquirer from 'inquirer';
 import { DEFAULT_APP_NAME } from '../utils/constants';
 import { CliResults } from '../utils/interfaces';
+import logger from '../utils/logger';
 import { validateAppName } from '../utils/validator';
 
 const getAppName = async (cliResults: CliResults) => {
   const { appName } = await inquirer.prompt<Pick<CliResults, 'appName'>>({
     name: 'appName',
     type: 'input',
+    default: cliResults.appName,
     message: 'What will your project be called? (can be changed later)',
     validate: validateAppName,
     transformer: (input: string) => input.toLowerCase().trim(),
@@ -27,9 +29,9 @@ const getInstallPermissions = async (cliResults: CliResults) => {
   });
 
   if (runInstall) {
-    console.log('Dependencies will be installed!');
+    logger.info('Dependencies will be installed!');
   } else {
-    console.log("Run 'npm install' later to install all the dependencies.");
+    logger.info('Run `npm install` later to install all the dependencies.');
 
     // eslint-disable-next-line no-param-reassign
     cliResults.flags.noInstall = true;
@@ -47,9 +49,9 @@ const getGitPermissions = async (cliResults: CliResults) => {
   });
 
   if (runGit) {
-    console.log('Git will be initialized!');
+    logger.info('Git will be initialized!');
   } else {
-    console.log("Run 'git init' later to initialize a git repository.");
+    logger.info('Run `git init` later to initialize a git repository.');
 
     // eslint-disable-next-line no-param-reassign
     cliResults.flags.noGit = true;
@@ -76,10 +78,12 @@ const getTemplatePermissions = async (cliResults: CliResults) => {
   });
 
   if (withUser) {
-    console.log('User template will be added!');
+    logger.info('User template will be added!');
 
     // eslint-disable-next-line no-param-reassign
     cliResults.flags.withUser = true;
+  } else {
+    logger.info('User template will not be added!');
   }
 
   const { withFile } = await inquirer.prompt<{ withFile: boolean }>({
@@ -90,10 +94,12 @@ const getTemplatePermissions = async (cliResults: CliResults) => {
   });
 
   if (withFile) {
-    console.log('File template will be added!');
+    logger.info('File template will be added!');
 
     // eslint-disable-next-line no-param-reassign
     cliResults.flags.withFile = true;
+  } else {
+    logger.info('File template will not be added!');
   }
 };
 

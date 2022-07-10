@@ -1,29 +1,41 @@
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
+import ora from 'ora';
 import { execAsync } from './common';
 import { PACKAGES, GIT_IGNORE, SCRIPTS } from './constants';
 import { CliFlags } from './interfaces';
+import logger from './logger';
 
 export const initializeDirectory = async (appName: string, projectDir: string) => {
   if (fs.existsSync(projectDir)) {
     if (fs.readdirSync(projectDir).length === 0) {
-      console.log(`${appName} exists but is empty, continuing...\n`);
+      logger.info(`${appName} exists but is empty, continuing...\n`);
     } else {
       const { overwriteDir } = await inquirer.prompt<{ overwriteDir: boolean }>({
         name: 'overwriteDir',
         type: 'confirm',
-        message: `${'Warning:'} ${appName} already exists and isn't empty. Do you want to overwrite it?`,
+        message: `${chalk.redBright.bold('Warning:')} ${chalk.cyan.bold(
+          appName
+        )} already exists and isn't empty. Do you want to overwrite it?`,
         default: false,
       });
 
       if (!overwriteDir) {
-        console.log(`${chalk.red('Exiting')}...`);
+        logger.info('Exiting...');
         process.exit(0);
       }
 
-      console.log(`Emptying ${appName} and creating with CRB...\n`);
-      await fs.emptyDir(projectDir);
+      const spinner = ora(`Emptying ${appName} and creating with CRB...\n`).start();
+
+      try {
+        await fs.emptyDir(projectDir);
+        spinner.succeed();
+      } catch {
+        spinner.fail(chalk.red.bold('An error has occured'));
+        spinner.fail(chalk.red.bold('Exiting...'));
+        process.exit(1);
+      }
     }
   } else {
     await fs.mkdirp(projectDir);
@@ -48,15 +60,21 @@ export const addPackages = async (projectDir: string, packageManager: string, fl
 
   if (flags.noInstall) return;
 
-  console.log(`Installing dependencies with ${packageManager}...`);
+  const spinner = ora(`Installing dependencies with ${packageManager}...`).start();
 
-  await execAsync(`${packageManager} install`, {
-    cwd: projectDir,
-  });
+  try {
+    await execAsync(`${packageManager} install`, {
+      cwd: projectDir,
+    });
+
+    spinner.succeed(chalk.green('Dependencies installed successfully!'));
+  } catch {
+    spinner.fail(chalk.red('Failed to install dependencies'));
+  }
 };
 
 export const initializeGit = async (projectDir: string) => {
-  console.log('Initializing Git...');
+  const spinner = ora('Initializing git...\n\n').start();
 
   let initCmd = 'git init --initial-branch=main';
 
@@ -74,23 +92,35 @@ export const initializeGit = async (projectDir: string) => {
     }
 
     await execAsync(initCmd, { cwd: projectDir });
-    console.log('Git initialized.');
+    spinner.succeed(chalk.green.bold('Git initialized.'));
 
     // Create .gitignore file
     await fs.writeFile(`${projectDir}/.gitignore`, GIT_IGNORE);
   } catch {
-    console.log(chalk.red('Failed to initialize Git. Please update git to continue.'));
+    spinner.fail(chalk.red.bold('Failed to initialize Git. Please update git to continue.'));
   }
 };
 
 export const addScripts = async (projectDir: string) => {
-  console.log('Adding scripts...');
+  const spinner = ora('Adding scripts...\n\n').start();
 
-  await Promise.all(
-    Object.values(SCRIPTS).map(({ name, script }) =>
-      execAsync(`npm set-script ${name} "${script}"`, { cwd: projectDir })
-    )
-  );
-
-  console.log('Scripts added successfully.');
+  try {
+    await Promise.all(
+      Object.values(SCRIPTS).map(({ name, script }) =>
+        execAsync(`npm set-script ${name} "${script}"`, { cwd: projectDir })
+      )
+    );
+    spinner.succeed(chalk.green.bold('Scripts added successfully.'));
+  } catch {
+    spinner.fail(
+      chalk.red.bold(`Failed to add scripts. Please run this manually in ${projectDir}.`)
+    );
+    spinner.fail(
+      chalk.red.bold(`
+  ${Object.values(SCRIPTS)
+    .map(({ name, script }) => `npm set-script ${name} "${script}"`)
+    .join('\n  ')}
+`)
+    );
+  }
 };

@@ -1,3 +1,5 @@
+import ora from 'ora';
+import chalk from 'chalk';
 import fs from 'fs-extra';
 import { promisify } from 'util';
 import { exec } from 'child_process';
@@ -22,13 +24,22 @@ export const commitChanges = async (projectDir: string) => {
 };
 
 export const modifyPackageJson = async (projectDir: string, appName: string) => {
-  const packageJson = JSON.parse(await fs.readFile(`${projectDir}/package.json`, 'utf8'));
+  const packageJson = await fs.readJSON(`${projectDir}/package.json`);
 
   packageJson.name = appName;
   packageJson.description = DESCRIPTIONS;
   packageJson.prisma = PRSIMA;
 
-  await fs.writeFile(`${projectDir}/package.json`, JSON.stringify(packageJson, null, 2));
+  const spinner = ora(`Updating package.json...\n`).start();
+
+  try {
+    await fs.writeJSON(`${projectDir}/package.json`, packageJson, {
+      spaces: 2,
+    });
+    spinner.succeed(chalk.green.bold('Package.json updated successfully!'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to update package.json'));
+  }
 };
 
 export const removeGitIgnore = async (projectDir: string) => {

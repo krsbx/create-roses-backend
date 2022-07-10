@@ -6,7 +6,9 @@ import createProject from './templates';
 import initializeExpress from './templates/express';
 import initializePrisma from './templates/prisma';
 import { commitChanges, modifyPackageJson, removeGitIgnore } from './utils/common';
-import { initializeGit } from './utils/initializer';
+import { addScripts, initializeGit } from './utils/initializer';
+import logger from './utils/logger';
+import nextStep from './utils/nextStep';
 
 const main = async () => {
   renderTitle();
@@ -14,6 +16,8 @@ const main = async () => {
   const { appName, flags } = await runCli();
 
   const projectDir = await createProject(appName, flags);
+
+  await addScripts(projectDir);
 
   await initializeExpress(projectDir, flags);
   await initializePrisma(projectDir, flags);
@@ -27,7 +31,9 @@ const main = async () => {
 
   await modifyPackageJson(projectDir, appName);
 
-  console.log(`Project created at ${projectDir}`);
+  logger.success(`\nProject created at ${projectDir}\n`);
+
+  nextStep(projectDir, flags);
 };
 
 main();

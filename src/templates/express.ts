@@ -1,3 +1,5 @@
+import ora from 'ora';
+import chalk from 'chalk';
 import fs from 'fs-extra';
 import { DIRECTORY_STRUCTURE, FILES_DIRECTORY_STRUCTURE } from '../utils/constants';
 import { express } from './express/index';
@@ -20,9 +22,17 @@ import { constants } from './express/utils/constants';
 import { CliFlags } from '../utils/interfaces';
 
 const createAllDirectories = async (projectDir: string) => {
-  console.log('Creating directories...');
+  const spinner = ora('Creating directories...\n').start();
 
-  await Promise.all(Object.values(DIRECTORY_STRUCTURE).map((p) => fs.mkdirp(`${projectDir}/${p}`)));
+  try {
+    await Promise.all(
+      Object.values(DIRECTORY_STRUCTURE).map((p) => fs.mkdirp(`${projectDir}/${p}`))
+    );
+
+    spinner.succeed(chalk.green.bold('Directories created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to create directories.'));
+  }
 };
 
 const createBaseRepository = async (projectDir: string, flags: CliFlags) => {
@@ -52,8 +62,18 @@ const createBaseRepository = async (projectDir: string, flags: CliFlags) => {
 
   repo += `${baseRepository.baseRepository}\n`;
 
-  await fs.writeFile(`${projectDir}/src/repository/baseRepository.ts`, repo);
-  await fs.writeFile(`${projectDir}/src/utils/interface.ts`, interfaces);
+  const spinner = ora('Creating base repository...\n').start();
+
+  try {
+    await Promise.all([
+      fs.writeFile(`${projectDir}/src/repository/baseRepository.ts`, repo),
+      fs.writeFile(`${projectDir}/src/utils/interface.ts`, interfaces),
+    ]);
+
+    spinner.succeed(chalk.green.bold('Base repository created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to create base repository.'));
+  }
 };
 
 const createRepository = async (projectDir: string, flags: CliFlags) => {
@@ -71,7 +91,15 @@ const createRepository = async (projectDir: string, flags: CliFlags) => {
 
   repo += `${repositories.repository.end}\n`;
 
-  await fs.writeFile(`${projectDir}/src/repository/index.ts`, repo);
+  const spinner = ora('Creating repository...\n').start();
+
+  try {
+    await fs.writeFile(`${projectDir}/src/repository/index.ts`, repo);
+
+    spinner.succeed(chalk.green.bold('Repository created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to create repository.'));
+  }
 };
 
 const createConstants = async (projectDir: string, flags: CliFlags) => {
@@ -84,35 +112,43 @@ const createConstants = async (projectDir: string, flags: CliFlags) => {
 };
 
 const createUserTemplate = async (projectDir: string) => {
-  console.log(`Creating user template...`);
+  const spinner = ora('Creating user template...\n').start();
 
-  await Promise.all([
-    fs.writeFile(`${projectDir}/src/middleware/users.ts`, usersMw),
-    fs.writeFile(`${projectDir}/src/repository/users.ts`, userRepository),
-    fs.writeFile(`${projectDir}/src/routes/auths.ts`, authRoutes),
-    fs.writeFile(`${projectDir}/src/routes/users.ts`, userRoutes),
-    fs.writeFile(`${projectDir}/src/utils/encryption.ts`, encryption),
-    fs.writeFile(`${projectDir}/src/utils/token.ts`, token),
-  ]);
+  try {
+    await Promise.all([
+      fs.writeFile(`${projectDir}/src/middleware/users.ts`, usersMw),
+      fs.writeFile(`${projectDir}/src/repository/users.ts`, userRepository),
+      fs.writeFile(`${projectDir}/src/routes/auths.ts`, authRoutes),
+      fs.writeFile(`${projectDir}/src/routes/users.ts`, userRoutes),
+      fs.writeFile(`${projectDir}/src/utils/encryption.ts`, encryption),
+      fs.writeFile(`${projectDir}/src/utils/token.ts`, token),
+    ]);
 
-  console.log(`User template created.`);
+    spinner.succeed(chalk.green.bold('User template created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to create user template.'));
+  }
 };
 
 const createFileTemplate = async (projectDir: string) => {
-  console.log(`Creating file template...`);
+  const spinner = ora('Creating File template...\n').start();
 
-  await Promise.all([
-    fs.writeFile(`${projectDir}/src/middleware/files.ts`, filesMw),
-    fs.writeFile(`${projectDir}/src/repository/files.ts`, fileRepository),
-    fs.writeFile(`${projectDir}/src/routes/files.ts`, fileRoutes),
-    fs.writeFile(`${projectDir}/src/utils/files.ts`, fileMulter),
-    Object.values(FILES_DIRECTORY_STRUCTURE).map(async (p) => {
-      await fs.mkdirp(`${projectDir}/${p}`);
-      await fs.writeFile(`${projectDir}/${p}/.gitkeep`, '');
-    }),
-  ]);
+  try {
+    await Promise.all([
+      fs.writeFile(`${projectDir}/src/middleware/files.ts`, filesMw),
+      fs.writeFile(`${projectDir}/src/repository/files.ts`, fileRepository),
+      fs.writeFile(`${projectDir}/src/routes/files.ts`, fileRoutes),
+      fs.writeFile(`${projectDir}/src/utils/files.ts`, fileMulter),
+      Object.values(FILES_DIRECTORY_STRUCTURE).map(async (p) => {
+        await fs.mkdirp(`${projectDir}/${p}`);
+        await fs.writeFile(`${projectDir}/${p}/.gitkeep`, '');
+      }),
+    ]);
 
-  console.log(`File template created.`);
+    spinner.succeed(chalk.green.bold('File template created.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to create File template.'));
+  }
 };
 
 const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
@@ -152,20 +188,24 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
 const initializeExpress = async (projectDir: string, flags: CliFlags) => {
   await createAllDirectories(projectDir);
 
-  console.log(`Initializing express...`);
+  const spinner = ora(`Initializing express...`).start();
 
-  await Promise.all([
-    fs.writeFile(`${projectDir}/src/index.ts`, express),
-    fs.writeFile(`${projectDir}/src/middleware/queryParser.ts`, queryParserMw),
-    createExpressRoot(projectDir, flags),
-    createBaseRepository(projectDir, flags),
-    createRepository(projectDir, flags),
-    createConstants(projectDir, flags),
-    flags.withUser ? createUserTemplate(projectDir) : Promise.resolve(),
-    flags.withFile ? createFileTemplate(projectDir) : Promise.resolve(),
-  ]);
+  try {
+    await Promise.all([
+      fs.writeFile(`${projectDir}/src/index.ts`, express),
+      fs.writeFile(`${projectDir}/src/middleware/queryParser.ts`, queryParserMw),
+      createExpressRoot(projectDir, flags),
+      createBaseRepository(projectDir, flags),
+      createRepository(projectDir, flags),
+      createConstants(projectDir, flags),
+      flags.withUser ? createUserTemplate(projectDir) : Promise.resolve(),
+      flags.withFile ? createFileTemplate(projectDir) : Promise.resolve(),
+    ]);
 
-  console.log(`Express initialized.`);
+    spinner.succeed(chalk.green.bold('Express initialized.'));
+  } catch {
+    spinner.fail(chalk.red.bold('Failed to initialize express.'));
+  }
 };
 
 export default initializeExpress;
