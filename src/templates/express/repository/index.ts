@@ -5,9 +5,7 @@ export const imports = {
 
 export const repository = {
   start: 'export default {',
-  repository: {
-    user: 'user,',
-    file: 'file,',
-  },
+  user: 'user,',
+  file: 'file,',
   end: '};',
 };

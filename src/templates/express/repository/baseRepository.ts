@@ -1,11 +1,9 @@
 export const imports = {
   lodash: "import _ from 'lodash';",
   client: {
-    start: 'import { PrismaClient',
-    model: {
-      user: 'User,',
-      file: 'File,',
-    },
+    start: 'import { PrismaClient, Prisma,',
+    user: 'User,',
+    file: 'File,',
     end: "} from '@prisma/client';",
   },
   interface: "import { AnyRecord, BaseOption, Find } from '../utils/interface';",
@@ -28,18 +26,24 @@ export const prismaInstances = {
 
 export const types = {
   modelStructures: {
-    start: 'export type ModelStructure = {',
-    model: {
-      user: 'user: User;',
-      file: 'file: File;',
-    },
+    start: `
+//* Add the model types from the Prisma client
+//* -- By doing this, we can use the types in the models
+//! -- Please keep in mind that the keys in the Prisma client are not the same as the keys in the models
+//! -- Make sure to update the types if you change the models, like this
+//! -- export type ModelStructure = {
+//! --   user: User, //* Notices that the key is should be in camelCase and for the types should be in PascalCase
+//! -- };
+export type ModelStructure = {`,
+    user: 'user: User;',
+    file: 'file: File;',
     end: '};',
   },
   modelName: 'export type ModelName = keyof typeof models;',
   scalarFields: 'export type ModelScalarFields<T extends ModelName> = ModelStructure[T];',
 };
 
-export const baseRepoClass = `/**
+export const baseRepository = `/**
  * @param model - The model name
  * @description Where, Select, Include, Create, Update, Cursor, Order
  */

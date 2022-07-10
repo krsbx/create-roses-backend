@@ -1,4 +1,4 @@
-export const queryParse = `import PrismaFQP from '@krsbx/prisma-fqp';
+export const queryParser = `import PrismaFQP from '@krsbx/prisma-fqp';
 import asyncMw from 'fork-async-express-mw';
 
 export const queryParserMw = asyncMw(async (req, res, next) => {

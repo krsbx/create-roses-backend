@@ -4,7 +4,7 @@
   "description": "Simplify process of creating a TypeSafety backend with Node Js, Prisma, and TypeScript",
   "main": "dist/index.js",
   "scripts": {
-    "start": "ts-node src/index.ts @krsbx/crb --noInstall --noGit",
+    "start": "ts-node src/index.ts @krsbx/crb --noInstall --noGit --withTemplate",
     "dev": "nodemon src/index.ts",
     "prepare": "husky install"
   },

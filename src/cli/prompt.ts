@@ -56,11 +56,53 @@ const getGitPermissions = async (cliResults: CliResults) => {
   }
 };
 
+const getTemplatePermissions = async (cliResults: CliResults) => {
+  if (cliResults.flags.withTemplate) {
+    // eslint-disable-next-line no-param-reassign
+    cliResults.flags = {
+      ...cliResults.flags,
+      withUser: true,
+      withFile: true,
+    };
+
+    return;
+  }
+
+  const { withUser } = await inquirer.prompt<{ withUser: boolean }>({
+    name: 'withUser',
+    type: 'confirm',
+    message: 'Would you like to use the user template?',
+    default: false,
+  });
+
+  if (withUser) {
+    console.log('User template will be added!');
+
+    // eslint-disable-next-line no-param-reassign
+    cliResults.flags.withUser = true;
+  }
+
+  const { withFile } = await inquirer.prompt<{ withFile: boolean }>({
+    name: 'withFile',
+    type: 'confirm',
+    message: 'Would you like to use the file template?',
+    default: false,
+  });
+
+  if (withFile) {
+    console.log('File template will be added!');
+
+    // eslint-disable-next-line no-param-reassign
+    cliResults.flags.withFile = true;
+  }
+};
+
 const getAllPrompts = async (cliResults: CliResults) => {
   if (cliResults.appName === DEFAULT_APP_NAME) await getAppName(cliResults);
 
   await getInstallPermissions(cliResults);
   await getGitPermissions(cliResults);
+  await getTemplatePermissions(cliResults);
 };
 
 export default getAllPrompts;
