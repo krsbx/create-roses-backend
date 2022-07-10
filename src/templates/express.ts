@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { DIRECTORY_STRUCTURE } from '../utils/constants';
+import { DIRECTORY_STRUCTURE, FILES_DIRECTORY_STRUCTURE } from '../utils/constants';
 import { express } from './express/index';
 import { queryParserMw } from './express/middleware/queryParser';
 import { usersMw } from './express/middleware/users';
@@ -106,6 +106,10 @@ const createFileTemplate = async (projectDir: string) => {
     fs.writeFile(`${projectDir}/src/repository/files.ts`, fileRepository),
     fs.writeFile(`${projectDir}/src/routes/files.ts`, fileRoutes),
     fs.writeFile(`${projectDir}/src/utils/files.ts`, fileMulter),
+    Object.values(FILES_DIRECTORY_STRUCTURE).map(async (p) => {
+      await fs.mkdirp(`${projectDir}/${p}`);
+      await fs.writeFile(`${projectDir}/${p}/.gitkeep`, '');
+    }),
   ]);
 
   console.log(`File template created.`);

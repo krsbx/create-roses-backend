@@ -83,6 +83,10 @@ DB_SCHEMA=
 
 export const GIT_IGNORE = `node_modules
 
+public/*
+
+!*/**/.gitkeep
+
 # Keep environment variables out of version control
 .env
 .env.local
@@ -95,6 +99,13 @@ export const DIRECTORY_STRUCTURE = {
   repository: 'src/repository',
   routes: 'src/routes',
   utils: 'src/utils',
+};
+
+export const FILES_DIRECTORY_STRUCTURE = {
+  audios: 'public/audios',
+  files: 'public/files',
+  images: 'public/images',
+  videos: 'public/videos',
 };
 
 export const SCRIPTS = {

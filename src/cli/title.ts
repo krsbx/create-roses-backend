@@ -15,7 +15,7 @@ const renderTitle = () => {
     COLOR_SCHEME.BRIGHT_RED,
   ];
 
-  const text = figlet.textSync(APP_TITLE, { font: '4Max' });
+  const text = figlet.textSync(APP_TITLE, { font: 'Small' });
   const roseGradient = gradient(colors);
 
   console.log(roseGradient.multiline(text));
