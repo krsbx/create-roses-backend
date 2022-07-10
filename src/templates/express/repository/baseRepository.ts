@@ -11,7 +11,7 @@ export const imports = {
   interface: "import { AnyRecord, BaseOption, Find } from '../utils/interface';",
 };
 
-export const instances = {
+export const prismaInstances = {
   prisma: 'export const prisma = new PrismaClient();',
   models: `export const models = _.omit(prisma, [
   '$on',
