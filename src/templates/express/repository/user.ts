@@ -26,16 +26,6 @@ const modelToResource = async (user: ModelStructure['user']) => {
   return _.omit(user, ['password', 'updatedAt']);
 };
 
-const getProfile = async (id: Prisma.UserWhereInput | string | number) => {
-  const user = await userRepository.findOne(id, {
-    include: {
-      profile: true,
-    },
-  });
-
-  return user;
-};
-
 const checkEmailUsername = async (
   email: string,
   username: string,
@@ -63,7 +53,6 @@ const checkEmailUsername = async (
 };
 
 const extendsUserRepository = {
-  getProfile,
   checkEmailUsername,
   modelToResource,
   resourceToModel,

@@ -5,6 +5,7 @@ import * as schema from './prisma/schema';
 import { prismaInstance } from './prisma/seed/instance';
 import { CliFlags } from '../utils/interfaces';
 import { ENV } from '../utils/constants';
+import { userSeeder } from './prisma/seed/user';
 
 const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
   console.log('Creating prisma seeds...');
@@ -18,7 +19,10 @@ const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
   if (flags.withUser) seed += `  ${seeds.seeder.user}\n`;
   seed += `${seeds.seeder.end}\n`;
 
-  await fs.writeFile(`${projectDir}/prisma/seed/index.ts`, seed);
+  await Promise.all([
+    fs.writeFile(`${projectDir}/prisma/seed/index.ts`, seed),
+    fs.writeFile(`${projectDir}/prisma/seed/user.ts`, userSeeder),
+  ]);
 
   console.log('Prisma seeds created.');
 };

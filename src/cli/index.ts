@@ -16,8 +16,8 @@ const runCli = async () => {
     .option('--noGit', 'Explicitly tell to not init a git repository', false)
     .option('--noInstall', 'Explicitly tell to not install all dependencies', false)
     .option('--withTemplate', 'Explicitly tell to use all templates', false)
-    .option('--withUser, --user', 'Explicitly tell to use the user template', false)
-    .option('--withFile, --file', 'Explicitly tell to use the file template', false)
+    .option('--withUser', 'Explicitly tell to use the user template', false)
+    .option('--withFile', 'Explicitly tell to use the file template', false)
     .option('-y, --default', 'Use default values for all prompts', false)
     .version('v1', '-v, --version', 'Display the current version of CRB')
     .addHelpText(
@@ -32,6 +32,14 @@ const runCli = async () => {
   if (cliProjectName) cliResults.appName = cliProjectName;
 
   cliResults.flags = program.opts();
+
+  if (cliResults.flags.withTemplate) {
+    cliResults.flags = {
+      ...cliResults.flags,
+      withUser: true,
+      withFile: true,
+    };
+  }
 
   try {
     if (!cliResults.flags.default) {

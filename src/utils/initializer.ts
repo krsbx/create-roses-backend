@@ -22,7 +22,7 @@ export const initializeDirectory = async (appName: string, projectDir: string) =
         process.exit(0);
       }
 
-      console.log(`Emptying ${appName} and creating CRB...\n`);
+      console.log(`Emptying ${appName} and creating with CRB...\n`);
       await fs.emptyDir(projectDir);
     }
   } else {
@@ -30,14 +30,6 @@ export const initializeDirectory = async (appName: string, projectDir: string) =
   }
 
   await execAsync('npm init -y', { cwd: projectDir });
-
-  const packageJson = JSON.parse(await fs.readFile(`${projectDir}/package.json`, 'utf8'));
-
-  packageJson.name = appName;
-  packageJson.description = DESCRIPTIONS;
-  packageJson.prisma = PRSIMA;
-
-  await fs.writeFile(`${projectDir}/package.json`, JSON.stringify(packageJson, null, 2));
 };
 
 export const addPackages = async (projectDir: string, packageManager: string, flags: CliFlags) => {
@@ -101,4 +93,14 @@ export const addScripts = async (projectDir: string) => {
   );
 
   console.log('Scripts added successfully.');
+};
+
+export const modifiedPackageJson = async (projectDir: string, appName: string) => {
+  const packageJson = JSON.parse(await fs.readFile(`${projectDir}/package.json`, 'utf8'));
+
+  packageJson.name = appName;
+  packageJson.description = DESCRIPTIONS;
+  packageJson.prisma = PRSIMA;
+
+  await fs.writeFile(`${projectDir}/package.json`, JSON.stringify(packageJson, null, 2));
 };

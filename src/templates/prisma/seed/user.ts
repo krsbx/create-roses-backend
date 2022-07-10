@@ -1,6 +1,6 @@
 export const userSeeder = `import { Prisma } from './instance';
 import { hashText } from '../../src/utils/encryption';
-import { USER_ROLE } from '../../src/utils/constants';
+import { USER_ROLE } from '../../src/utils/constant';
 
 const main = async (prisma: Prisma) => {
   await prisma.user.createMany({

@@ -1,7 +1,10 @@
 import fs from 'fs-extra';
 import { DIRECTORY_STRUCTURE } from '../utils/constants';
 import { express } from './express/index';
-import { queryParser } from './express/middleware/queryParser';
+import { queryParserMw } from './express/middleware/queryParser';
+import { usersMw } from './express/middleware/user';
+import { authRoutes } from './express/routes/auths';
+import { userRoutes } from './express/routes/users';
 import { token } from './express/utils/token';
 import * as roots from './express/utils/root';
 import * as repositories from './express/repository/index';
@@ -56,12 +59,12 @@ const createRepository = async (projectDir: string, flags: CliFlags) => {
   if (flags.withUser) repo += `${repositories.imports.user}\n`;
   if (flags.withFile) repo += `${repositories.imports.file}\n`;
 
+  if (flags.withUser || flags.withFile) repo += `\n`;
+
   repo += `${repositories.repository.start}\n`;
 
   if (flags.withUser) repo += `  ${repositories.repository.user}\n`;
   if (flags.withFile) repo += `  ${repositories.repository.file}\n`;
-
-  if (flags.withUser || flags.withFile) repo += `\n`;
 
   repo += `${repositories.repository.end}\n`;
 
@@ -72,10 +75,13 @@ const createUserTemplate = async (projectDir: string) => {
   console.log(`Creating user template...`);
 
   await Promise.all([
-    fs.writeFile(`${projectDir}/src/utils/constants.ts`, constants.user),
+    fs.writeFile(`${projectDir}/src/middleware/users.ts`, usersMw),
+    fs.writeFile(`${projectDir}/src/repository/user.ts`, userRepository),
+    fs.writeFile(`${projectDir}/src/routes/auths.ts`, authRoutes),
+    fs.writeFile(`${projectDir}/src/routes/users.ts`, userRoutes),
+    fs.writeFile(`${projectDir}/src/utils/constant.ts`, constants.user),
     fs.writeFile(`${projectDir}/src/utils/encryption.ts`, encryption),
     fs.writeFile(`${projectDir}/src/utils/token.ts`, token),
-    fs.writeFile(`${projectDir}/src/repository/user.ts`, userRepository),
   ]);
 
   console.log(`User template created.`);
@@ -96,8 +102,11 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
   root += `${roots.imports.cors}\n`;
   root += `${roots.imports.queryParser}\n`;
 
-  if (flags.withUser) root += `${roots.imports.user}\n`;
-  if (flags.withFile) root += `${roots.imports.file}\n`;
+  if (flags.withUser) {
+    root += `${roots.imports.auth}\n`;
+    root += `${roots.imports.user}\n`;
+  }
+  // if (flags.withFile) root += `${roots.imports.file}\n`;
 
   root += `\n`;
 
@@ -105,14 +114,15 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
   root += `  ${roots.exporter.middleware.json}\n`;
   root += `  ${roots.exporter.middleware.url}\n`;
   root += `  ${roots.exporter.middleware.public}\n`;
-  root += `  ${roots.exporter.middleware.cors}\n`;
-
-  root += `\n\n`;
+  root += `  ${roots.exporter.middleware.cors}\n\n`;
 
   root += `  ${roots.exporter.middleware.queryParser}\n`;
 
-  if (flags.withUser) root += `  ${roots.exporter.middleware.users}\n`;
-  if (flags.withFile) root += `  ${roots.exporter.middleware.files}\n`;
+  if (flags.withUser) {
+    root += `  ${roots.exporter.middleware.auth}\n`;
+    root += `  ${roots.exporter.middleware.users}\n`;
+  }
+  // if (flags.withFile) root += `  ${roots.exporter.middleware.files}\n`;
 
   root += `${roots.exporter.end}\n`;
 
@@ -126,7 +136,7 @@ const initializeExpress = async (projectDir: string, flags: CliFlags) => {
 
   await Promise.all([
     fs.writeFile(`${projectDir}/src/index.ts`, express),
-    fs.writeFile(`${projectDir}/src/middleware/queryParser.ts`, queryParser),
+    fs.writeFile(`${projectDir}/src/middleware/queryParser.ts`, queryParserMw),
     createExpressRoot(projectDir, flags),
     createBaseRepository(projectDir, flags),
     createRepository(projectDir, flags),

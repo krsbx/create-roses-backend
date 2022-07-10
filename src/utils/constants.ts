@@ -93,6 +93,7 @@ export const DIRECTORY_STRUCTURE = {
   src: 'src',
   middleware: 'src/middleware',
   repository: 'src/repository',
+  routes: 'src/routes',
   utils: 'src/utils',
 };
 

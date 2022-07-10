@@ -9,11 +9,10 @@ const createProject = async (appName: string, flags: CliFlags) => {
 
   await initializeDirectory(appName, projectDir);
 
-  await Promise.all([
-    addPackages(projectDir, packageManager, flags),
-    addScripts(projectDir),
-    !flags.noGit ? initializeGit(projectDir) : Promise.resolve(),
-  ]);
+  await addPackages(projectDir, packageManager, flags);
+  await addScripts(projectDir);
+
+  if (!flags.noGit) await initializeGit(projectDir);
 
   return projectDir;
 };
