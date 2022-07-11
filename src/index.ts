@@ -5,7 +5,12 @@ import renderTitle from './cli/title';
 import createProject from './templates';
 import initializeExpress from './templates/express';
 import initializePrisma from './templates/prisma';
-import { commitChanges, modifyPackageJson, removeGitIgnore } from './utils/common';
+import {
+  commitChanges,
+  modifyPackageJson,
+  parseNameAndPath,
+  removeGitIgnore,
+} from './utils/common';
 import { addScripts, initializeGit } from './utils/initializer';
 import logger from './utils/logger';
 import nextStep from './utils/nextStep';
@@ -15,6 +20,7 @@ const main = async () => {
 
   const { appName, flags } = await runCli();
 
+  const [scopedAppName, projectPath] = parseNameAndPath(appName);
   const projectDir = await createProject(appName, flags);
 
   await addScripts(projectDir);
@@ -29,11 +35,11 @@ const main = async () => {
     await removeGitIgnore(projectDir);
   }
 
-  await modifyPackageJson(projectDir, appName);
+  await modifyPackageJson(projectDir, scopedAppName);
 
   logger.success(`\nProject created at ${projectDir}\n`);
 
-  nextStep(projectDir, flags);
+  nextStep(scopedAppName ?? projectPath, flags);
 };
 
 main();

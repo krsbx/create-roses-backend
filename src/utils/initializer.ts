@@ -48,28 +48,38 @@ export const addPackages = async (projectDir: string, packageManager: string, fl
   const dependencies = Object.values(PACKAGES.DEPEDENCIES);
   const devDependencies = Object.values(PACKAGES.DEV_DEPEDENCIES);
 
-  // Add dependencies
-  await execAsync(`npx add-dependencies ${dependencies.join(' ')}`, {
-    cwd: projectDir,
-  });
+  const spinner1 = ora('Adding dependencies...\n').start();
 
-  // Add dev dependencies
-  await execAsync(`npx add-dependencies -D ${devDependencies.join(' ')}`, {
-    cwd: projectDir,
-  });
+  try {
+    await Promise.all([
+      // Add dependencies
+      execAsync(`npx add-dependencies ${dependencies.join(' ')}`, {
+        cwd: projectDir,
+      }),
+
+      // Add dev dependencies
+      execAsync(`npx add-dependencies -D ${devDependencies.join(' ')}`, {
+        cwd: projectDir,
+      }),
+    ]);
+
+    spinner1.succeed(chalk.green.bold('Dependencies added successfully'));
+  } catch {
+    spinner1.fail(chalk.red.bold('An error has occured while adding dependencies'));
+  }
 
   if (flags.noInstall) return;
 
-  const spinner = ora(`Installing dependencies with ${packageManager}...`).start();
+  const spinner2 = ora(`Installing dependencies with ${packageManager}...`).start();
 
   try {
     await execAsync(`${packageManager} install`, {
       cwd: projectDir,
     });
 
-    spinner.succeed(chalk.green('Dependencies installed successfully!'));
+    spinner2.succeed(chalk.green.bold('Dependencies installed successfully!'));
   } catch {
-    spinner.fail(chalk.red('Failed to install dependencies'));
+    spinner2.fail(chalk.red.bold('Failed to install dependencies'));
   }
 };
 
@@ -113,14 +123,10 @@ export const addScripts = async (projectDir: string) => {
     spinner.succeed(chalk.green.bold('Scripts added successfully.'));
   } catch {
     spinner.fail(
-      chalk.red.bold(`Failed to add scripts. Please run this manually in ${projectDir}.`)
-    );
-    spinner.fail(
-      chalk.red.bold(`
+      chalk.red.bold(`Failed to add scripts. Please run this manually in ${projectDir}.
   ${Object.values(SCRIPTS)
     .map(({ name, script }) => `npm set-script ${name} "${script}"`)
-    .join('\n  ')}
-`)
+    .join('\n  ')}`)
     );
   }
 };

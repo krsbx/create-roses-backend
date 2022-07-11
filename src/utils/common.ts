@@ -46,3 +46,20 @@ export const removeGitIgnore = async (projectDir: string) => {
   // Remove .gitignore since prisma will create it
   await fs.remove(`${projectDir}/.gitignore`);
 };
+
+// ref: https://github.com/t3-oss/create-t3-app/blob/main/src/utils/parseNameAndPath.ts
+export const parseNameAndPath = (input: string) => {
+  const paths = input.split('/');
+
+  let appName = paths[paths.length - 1];
+
+  // If the first part is a @, it's a scoped package
+  const indexOfDelimiter = paths.findIndex((p) => p.startsWith('@'));
+  if (paths.findIndex((p) => p.startsWith('@')) !== -1) {
+    appName = paths.slice(indexOfDelimiter).join('/');
+  }
+
+  const path = paths.filter((p) => !p.startsWith('@')).join('/');
+
+  return [appName, path] as const;
+};
