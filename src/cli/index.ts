@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
 import { COLOR_SCHEME, CREATE_ROSES_BACKEND, DEFAULT_CLI_OPTIONS } from '../utils/constants';
+import packageJson from '../../package.json';
 import logger from '../utils/logger';
 import getAllPrompts from './prompt';
 import checkVersion from './version';
@@ -20,7 +21,7 @@ const runCli = async () => {
     .option('--withUser', 'Explicitly tell to use the user template', false)
     .option('--withFile', 'Explicitly tell to use the file template', false)
     .option('-y, --default', 'Use default values for all prompts', false)
-    .version('v1', '-v, --version', 'Display the current version of CRB')
+    .version(packageJson.version, '-v, --version', 'Display the current version of CRB')
     .addHelpText(
       'afterAll',
       `\n\nThis backend is used in most of ${chalk

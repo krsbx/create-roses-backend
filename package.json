@@ -2,7 +2,7 @@
   "name": "create-roses-backend",
   "version": "0.1.0",
   "description": "Simplify process of creating a TypeSafety backend with Node Js, Prisma, and TypeScript",
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
   "scripts": {
     "start": "node dist/index.mjs",
     "build": "tsup src/index.ts --format esm --clean --sourcemap --minify --metafile",
@@ -19,6 +19,10 @@
     "template",
     "backend"
   ],
+  "exports": "./dist/index.mjs",
+  "bin": {
+    "create-roses-backend": "./dist/index.mjs"
+  },
   "author": "krsbx",
   "license": "MIT",
   "bugs": {

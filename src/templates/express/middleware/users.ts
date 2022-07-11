@@ -1,5 +1,5 @@
 export const usersMw = `import _ from 'lodash';
-import asyncMw from 'fork-async-express-mw';
+import asyncMw from 'express-asyncmw';
 import repository from '../repository';
 import { compareText } from '../utils/encryption';
 import { signAccessToken, verifyAccessToken } from '../utils/token';

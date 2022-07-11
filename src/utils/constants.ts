@@ -39,7 +39,7 @@ export const PACKAGES = {
     DOTENV: 'dotenv',
     DOTENV_EXPAND: 'dotenv-expand',
     EXPRESS: 'express',
-    ASYNC_EXPRESS_MIDDLEWARE: 'fork-async-express-mw',
+    ASYNC_EXPRESS_MIDDLEWARE: 'express-asyncmw',
     JSONWEBTOKEN: 'jsonwebtoken',
     LODASH: 'lodash',
     MOMENT: 'moment',
