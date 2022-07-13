@@ -45,6 +45,7 @@ export type ModelStructure = {`,
 };
 
 export const baseRepository = `/**
+/**
  * @param model - The model name
  * @description Where, Select, Include, Create, Update, Cursor, Order
  */
@@ -61,14 +62,15 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
     include: Include = {} as Include
   ) {
     const limit = +(options.limit === 'all' ? 0 : _.get(options, 'limit', 10));
-    const offset = options.page && options.page > 0 ? limit * (options.page - 1) : 0;
+    const offset =
+      options.page && options.page > 0 ? limit * (options.page - 1) : 0;
     const otherOptions = _.omit(options, ['limit', 'offset', 'page']);
 
     const where = { ...conditions, ...filterQueryParams, ...otherOptions };
 
     return {
       // @ts-ignore
-      rows: (await prisma[this.model].findMany({
+      rows: (await models[this.model].findMany({
         where,
         ...(!_.isEmpty(include) && { include }),
         skip: offset,
@@ -76,7 +78,7 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
       })) as ModelStructure[T][],
       // eslint-disable-next-line no-underscore-dangle
       count: /* @ts-ignore */ (
-        await prisma[this.model].aggregate({
+        await models[this.model].aggregate({
           where,
           _count: true,
         })
@@ -84,41 +86,59 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
     };
   }
 
-  async findOne(
+  async findOne<T extends typeof this.model>(
     conditions: Where | number | string,
-    option: Find<Select, Include, Cursor, Order, ModelScalarFields<typeof this.model>> = {}
+    option: Find<
+      Select,
+      Include,
+      Cursor,
+      Order,
+      ModelScalarFields<typeof this.model>
+    > = {}
   ) {
-    const dbCond = _.isObject(conditions) ? conditions : { id: _.toNumber(conditions) };
+    const dbCond = _.isObject(conditions)
+      ? conditions
+      : { id: _.toNumber(conditions) };
 
     // @ts-ignore
-    return prisma[this.model].findFirst({ where: dbCond, ...option }) as Promise<ModelStructure[T]>;
+    return models[this.model].findFirst({
+      where: dbCond,
+      ...option,
+    }) as Promise<ModelStructure[T]>;
   }
 
-  async create(data: Create, option: BaseOption<Include, Select> = {}) {
+  async create<T extends typeof this.model>(
+    data: Create,
+    option: BaseOption<Include, Select> = {}
+  ) {
     // @ts-ignore
     return models[this.model].create({
       data,
       ...option,
-    });
+    }) as Promise<ModelStructure[T]>;
   }
 
-  async update(
+  async update<T extends typeof this.model>(
     conditions: Where | number | string,
     data: Update | Create,
     option: BaseOption<Include, Select> = {}
   ) {
-    const dbCond = _.isObject(conditions) ? conditions : { id: _.toNumber(conditions) };
+    const dbCond = _.isObject(conditions)
+      ? conditions
+      : { id: _.toNumber(conditions) };
 
     // @ts-ignore
     return models[this.model].update({
       data,
       where: dbCond,
       ...option,
-    });
+    }) as Promise<ModelStructure[T]>;
   }
 
   async delete(conditions: Where | number | string) {
-    const dbCond = _.isObject(conditions) ? conditions : { id: _.toNumber(conditions) };
+    const dbCond = _.isObject(conditions)
+      ? conditions
+      : { id: _.toNumber(conditions) };
 
     // @ts-ignore
     return models[this.model].deleteMany({
@@ -129,7 +149,13 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
   async findOrCreate(
     conditions: Where | number | string,
     data: Create,
-    option: Find<Select, Include, Cursor, Order, ModelScalarFields<typeof this.model>> = {}
+    option: Find<
+      Select,
+      Include,
+      Cursor,
+      Order,
+      ModelScalarFields<typeof this.model>
+    > = {}
   ) {
     const obj = await this.findOne(conditions, option);
 
@@ -140,7 +166,7 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
 
   async bulkCreate(data: Prisma.Enumerable<Create>, skipDuplicates = true) {
     // @ts-ignore
-    return models[this.data].createMany({
+    return models[this.model].createMany({
       data,
       skipDuplicates,
     });
@@ -148,15 +174,19 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
 
   async bulkUpdate(where: Where, data: Prisma.Enumerable<Update>) {
     // @ts-ignore
-    return models[this.data].updateMany({
+    return models[this.model].updateMany({
       data,
       where,
     });
   }
 }
 
-const factory = <Where, Select, Include, Create, Update, Cursor, Order>(model: ModelName) =>
-  new BaseRepository<Where, Select, Include, Create, Update, Cursor, Order>(model);
+const factory = <Where, Select, Include, Create, Update, Cursor, Order>(
+  model: ModelName
+) =>
+  new BaseRepository<Where, Select, Include, Create, Update, Cursor, Order>(
+    model
+  );
 
 export default factory;
 `;
