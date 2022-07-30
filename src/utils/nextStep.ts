@@ -12,6 +12,8 @@ const nextStep = (projectDir: string, flags: CliFlags) => {
     logger.info(`- ${packageManager} install`);
   }
 
+  logger.info('- Run `npx prisma-repo --model-structures`');
+  logger.info('- Run `npx prisma-repo --base-repository`');
   logger.info('- Run `npm run migrate -- [name]` to create the database migrations.');
   logger.info('- Run `npm run seed` to seed the database.');
   logger.info(`- ${packageManager === 'npm' ? 'npm run' : `${packageManager}`} dev`);
