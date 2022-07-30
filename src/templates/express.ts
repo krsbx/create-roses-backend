@@ -13,10 +13,8 @@ import { token } from './express/utils/token';
 import { fileMulter } from './express/utils/files';
 import * as roots from './express/utils/root';
 import * as repositories from './express/repository/index';
-import * as baseRepository from './express/repository/baseRepository';
 import { userRepository } from './express/repository/users';
 import { fileRepository } from './express/repository/files';
-import { interfaces } from './express/utils/interface';
 import { encryption } from './express/utils/encryption';
 import { constants } from './express/utils/constants';
 import { CliFlags } from '../utils/interfaces';
@@ -32,47 +30,6 @@ const createAllDirectories = async (projectDir: string) => {
     spinner.succeed(chalk.green.bold('Directories created.'));
   } catch {
     spinner.fail(chalk.red.bold('Failed to create directories.'));
-  }
-};
-
-const createBaseRepository = async (projectDir: string, flags: CliFlags) => {
-  let repo = '';
-
-  repo += `${baseRepository.imports.lodash}\n`;
-  repo += `${baseRepository.imports.client.start}`;
-
-  if (flags.withUser) repo += ` ${baseRepository.imports.client.user}`;
-  if (flags.withFile) repo += ` ${baseRepository.imports.client.file}`;
-
-  repo += `${baseRepository.imports.client.end}\n`;
-  repo += `${baseRepository.imports.interface}\n\n`;
-
-  repo += `${baseRepository.prismaInstances.prisma}\n`;
-  repo += `${baseRepository.prismaInstances.models}\n\n`;
-
-  repo += `${baseRepository.types.modelStructures.start}\n`;
-
-  if (flags.withUser) repo += `  ${baseRepository.types.modelStructures.user}\n`;
-  if (flags.withFile) repo += `  ${baseRepository.types.modelStructures.file}\n`;
-
-  repo += `${baseRepository.types.modelStructures.end}\n\n`;
-
-  repo += `${baseRepository.types.modelName}\n`;
-  repo += `${baseRepository.types.scalarFields}\n\n`;
-
-  repo += `${baseRepository.baseRepository}\n`;
-
-  const spinner = ora('Creating base repository...\n').start();
-
-  try {
-    await Promise.all([
-      fs.writeFile(`${projectDir}/src/repository/baseRepository.ts`, repo),
-      fs.writeFile(`${projectDir}/src/utils/interface.ts`, interfaces),
-    ]);
-
-    spinner.succeed(chalk.green.bold('Base repository created.'));
-  } catch {
-    spinner.fail(chalk.red.bold('Failed to create base repository.'));
   }
 };
 
@@ -195,7 +152,6 @@ const initializeExpress = async (projectDir: string, flags: CliFlags) => {
       fs.writeFile(`${projectDir}/src/index.ts`, express),
       fs.writeFile(`${projectDir}/src/middleware/queryParser.ts`, queryParserMw),
       createExpressRoot(projectDir, flags),
-      createBaseRepository(projectDir, flags),
       createRepository(projectDir, flags),
       createConstants(projectDir, flags),
       flags.withUser ? createUserTemplate(projectDir) : Promise.resolve(),

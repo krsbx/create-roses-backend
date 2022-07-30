@@ -55,6 +55,7 @@ export const PACKAGES = {
     NODE: '@types/node',
     NODEMON: 'nodemon',
     PRISMA: 'prisma',
+    PRSIMA_REPO: 'prisma-repo',
     TS_NODE: 'ts-node',
     TYPESCRIPT: 'typescript',
   },

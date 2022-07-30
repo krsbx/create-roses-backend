@@ -1,18 +1,10 @@
 export const userRepository = `import _ from 'lodash';
 import { Prisma } from '@prisma/client';
 import { hashText } from '../utils/encryption';
-import factory, { ModelStructure } from './baseRepository';
-import { AnyRecord } from '../utils/interface';
+import factory from './baseRepository';
+import { AnyRecord, ModelStructure, MODELS_NAME } from './models';
 
-const userRepository = factory<
-  Prisma.UserWhereInput,
-  Prisma.UserSelect,
-  unknown, // Change this to \`Prisma.UserInclude\` if you want to include related models
-  Prisma.UserCreateInput,
-  Prisma.UserUpdateInput,
-  Prisma.UserWhereUniqueInput,
-  Prisma.UserOrderByWithRelationInput
->('user');
+const userRepository = factory(MODELS_NAME.USER);
 
 const resourceToModel = async (resource: AnyRecord) => {
   const user = _.pick(resource, ['email', 'username', 'password']);

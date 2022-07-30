@@ -1,6 +1,6 @@
 {
   "name": "create-roses-backend",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Simplify process of creating a TypeSafety backend with Node Js, Prisma, and TypeScript",
   "main": "dist/index.mjs",
   "scripts": {

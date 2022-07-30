@@ -1,17 +1,10 @@
 export const fileRepository = `import _ from 'lodash';
 import { Prisma } from '@prisma/client';
-import factory, { ModelStructure } from './baseRepository';
-import { AnyRecord } from '../utils/interface';
+import factory from './baseRepository';
+import { AnyRecord, ModelStructure, MODELS_NAME } from './models';
 
-const filesRepository = factory<
-  Prisma.FileWhereInput,
-  Prisma.FileSelect,
-  unknown, // Change this to \`Prisma.FileInclude\` if you want to include related models
-  Prisma.FileCreateInput,
-  Prisma.FileUpdateInput,
-  Prisma.FileWhereUniqueInput,
-  Prisma.FileOrderByWithRelationInput
->('file');
+const filesRepository = factory(MODELS_NAME.USER);
+
 
 const resourceToModel = async (resource: AnyRecord) => {
   const model = _.pick(resource, ['path', 'filename', 'extension']);

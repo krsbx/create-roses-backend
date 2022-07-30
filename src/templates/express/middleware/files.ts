@@ -6,7 +6,7 @@ import { multerFileHandler } from '../utils/files';
 
 export const createFileMw = asyncMw(async (req, res, next) => {
   const data = await repository.file.resourceToModel(req.body);
-  req.file_ = await repository.file.create(data);
+  req.file = await repository.file.create(data);
 
   return next();
 });
@@ -21,7 +21,7 @@ export const getFileMw = asyncMw(async (req, res, next) => {
 
   if (!file) return res.send(404).json({ message: 'File not found' });
 
-  req.file_ = file;
+  req.file = file;
 
   return next();
 });
@@ -49,9 +49,9 @@ export const deleteFileMw = asyncMw(async (req, res) => {
 
 export const returnFileMw = asyncMw(async (req, res) => {
   // Download the file when we have download query
-  if (req.query.download) return res.download(req.file_.path);
+  if (req.query.download) return res.download(req.file.path);
 
-  return res.json(await repository.file.modelToResource(req.file_));
+  return res.json(await repository.file.modelToResource(req.file));
 });
 
 export const returnFilesMw = asyncMw(async (req, res) => {

@@ -143,10 +143,10 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
     // @ts-ignore
     return models[this.model].deleteMany({
       where: dbCond,
-    });
+    }) as Promise<Prisma.BatchPayload>;
   }
 
-  async findOrCreate(
+  async updateOrCreate(
     conditions: Where | number | string,
     data: Create,
     option: Find<
@@ -159,7 +159,7 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
   ) {
     const obj = await this.findOne(conditions, option);
 
-    if (obj) return obj;
+    if (obj) return this.update(conditions, data, option);
 
     return this.create(data);
   }
@@ -169,7 +169,7 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
     return models[this.model].createMany({
       data,
       skipDuplicates,
-    });
+    }) as Promise<Prisma.BatchPayload>;
   }
 
   async bulkUpdate(where: Where, data: Prisma.Enumerable<Update>) {
@@ -177,7 +177,7 @@ class BaseRepository<Where, Select, Include, Create, Update, Cursor, Order> {
     return models[this.model].updateMany({
       data,
       where,
-    });
+    }) as Promise<Prisma.BatchPayload>;
   }
 }
 
