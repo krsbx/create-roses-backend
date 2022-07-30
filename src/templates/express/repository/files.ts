@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import factory from './baseRepository';
 import { AnyRecord, ModelStructure, MODELS_NAME } from './models';
 
-const filesRepository = factory(MODELS_NAME.USER);
+const filesRepository = factory(MODELS_NAME.FILE);
 
 
 const resourceToModel = async (resource: AnyRecord) => {
