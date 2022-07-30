@@ -2,7 +2,6 @@ const repoConfig = `// eslint-disable-next-line import/no-extraneous-dependencie
 import { PrismaRepoConfig } from 'prisma-repo';
 
 const config: PrismaRepoConfig = {
-  extendExpress: true,
   overwrite: {
     baseRepository: true,
   },

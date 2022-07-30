@@ -1,7 +1,7 @@
 export const fileMulter = `import _ from 'lodash';
 import multer from 'multer';
+import type { Request, Response, NextFunction } from 'express';
 import { EXSTENSION } from './constant';
-import { AnyRecord } from './interface';
 
 const multerFileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -38,7 +38,7 @@ const multerFileStorage = multer.diskStorage({
 
     // Multiple cast so we can add a props in the request object
     // Need to cast it to unknown before we cast it to our custom Request type
-    (<AnyRecord>(<unknown>req)).fileDest = dest;
+    req.fileDest = dest;
 
     return cb(null, dest);
   },
@@ -46,7 +46,7 @@ const multerFileStorage = multer.diskStorage({
     const fileName = \`$\{new Date().getTime()}-$\{file.originalname}\`;
     const extension = file.originalname.split('.').pop();
 
-    req.body.path = \`$\{(<AnyRecord>(<unknown>req)).fileDest}/$\{fileName}\`;
+    req.body.path = \`$\{req.fileDest}/$\{fileName}\`;
     req.body.filename = fileName;
     req.body.extension = extension;
 
@@ -54,7 +54,7 @@ const multerFileStorage = multer.diskStorage({
   },
 });
 
-export const multerFileHandler = async (req: AnyRecord, res: AnyRecord, next: AnyRecord) => {
+export const multerFileHandler = async (req: Request, res: Response, next: NextFunction) => {
   multer({ storage: multerFileStorage }).fields([
     {
       name: 'images',
@@ -72,6 +72,6 @@ export const multerFileHandler = async (req: AnyRecord, res: AnyRecord, next: An
       name: 'files',
       maxCount: 1,
     },
-  ])(<AnyRecord>req, <AnyRecord>res, next); // Need to cast to any to remove type error
+  ])(req, res, next); // Need to cast to any to remove type error
 };
 `;

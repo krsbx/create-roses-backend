@@ -8,7 +8,6 @@ import { prismaInstance } from './prisma/seed/instance';
 import { CliFlags } from '../utils/interfaces';
 import { ENV } from '../utils/constants';
 import { userSeeder } from './prisma/seed/user';
-import logger from '../utils/logger';
 
 const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
   const spinner = ora('Creating prisma seeds...\n').start();
