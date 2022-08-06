@@ -80,7 +80,7 @@ const initializePrisma = async (projectDir: string, flags: CliFlags) => {
     await Promise.all([
       createPrismaSchema(projectDir, flags),
       createPrismaSeedInstance(projectDir),
-      createPrismaSeeds(projectDir, flags),
+      flags.withUser ? createPrismaSeeds(projectDir, flags) : Promise.resolve(),
 
       // Create .env file
       fs.writeFile(`${projectDir}/.env`, ENV),

@@ -60,6 +60,8 @@ const createRepository = async (projectDir: string, flags: CliFlags) => {
 };
 
 const createConstants = async (projectDir: string, flags: CliFlags) => {
+  if (!flags.withUser && !flags.withTemplate) return;
+
   let constant = '';
 
   if (flags.withUser) constant += constants.user;
