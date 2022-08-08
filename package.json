@@ -35,7 +35,7 @@
     "@types/figlet": "^1.5.4",
     "@types/fs-extra": "^9.0.13",
     "@types/gradient-string": "^1.1.2",
-    "@types/inquirer": "^8.2.1",
+    "@types/inquirer": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.30.5",
     "eslint": "^8.19.0",
