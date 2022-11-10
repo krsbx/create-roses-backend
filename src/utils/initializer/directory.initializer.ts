@@ -13,7 +13,9 @@ const overwriteDirConfirmation = async (appName: string, projectDir: string) => 
     process.exit(0);
   }
 
-  const spinner = ora(`Emptying ${appName} and creating with CRB...\n`).start();
+  const spinner = ora(
+    `${chalk.redBright.bold('Emptying')} ${chalk.cyan.bold(appName)} and creating with CRB...\n`
+  ).start();
 
   try {
     await fs.emptyDir(projectDir);
