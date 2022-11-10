@@ -1,5 +1,3 @@
-import { CliResults } from './interfaces';
-
 export const MINIMUM_NODE_VERSION = 14;
 
 export const APP_TITLE = 'CREATE ROSES BACKEND';
@@ -10,7 +8,7 @@ export const CREATE_ROSES_BACKEND = 'create-roses-backend';
 
 export const DESCRIPTIONS = `Project created with ${CREATE_ROSES_BACKEND}`;
 
-export const DEFAULT_CLI_OPTIONS: CliResults = {
+export const DEFAULT_CLI_OPTIONS: CRB.CliResults = {
   appName: DEFAULT_APP_NAME,
   flags: {
     noInstall: false,

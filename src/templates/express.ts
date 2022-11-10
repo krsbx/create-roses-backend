@@ -17,7 +17,6 @@ import { userRepository } from './express/repository/users';
 import { fileRepository } from './express/repository/files';
 import { encryption } from './express/utils/encryption';
 import { constants } from './express/utils/constants';
-import { CliFlags } from '../utils/interfaces';
 
 const createAllDirectories = async (projectDir: string) => {
   const spinner = ora('Creating directories...\n').start();
@@ -33,7 +32,7 @@ const createAllDirectories = async (projectDir: string) => {
   }
 };
 
-const createRepository = async (projectDir: string, flags: CliFlags) => {
+const createRepository = async (projectDir: string, flags: CRB.CliFlags) => {
   let repo = '';
 
   if (flags.withUser) repo += `${repositories.imports.user}\n`;
@@ -59,7 +58,7 @@ const createRepository = async (projectDir: string, flags: CliFlags) => {
   }
 };
 
-const createConstants = async (projectDir: string, flags: CliFlags) => {
+const createConstants = async (projectDir: string, flags: CRB.CliFlags) => {
   if (!flags.withUser && !flags.withTemplate) return;
 
   let constant = '';
@@ -110,7 +109,7 @@ const createFileTemplate = async (projectDir: string) => {
   }
 };
 
-const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
+const createExpressRoot = async (projectDir: string, flags: CRB.CliFlags) => {
   let root = '';
 
   root += `${roots.imports.express}\n`;
@@ -144,7 +143,7 @@ const createExpressRoot = async (projectDir: string, flags: CliFlags) => {
   await fs.writeFile(`${projectDir}/src/utils/root.ts`, root);
 };
 
-const initializeExpress = async (projectDir: string, flags: CliFlags) => {
+const initializeExpress = async (projectDir: string, flags: CRB.CliFlags) => {
   await createAllDirectories(projectDir);
 
   const spinner = ora(`Initializing express...`).start();
