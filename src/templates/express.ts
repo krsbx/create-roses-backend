@@ -59,7 +59,7 @@ const createRepository = async (projectDir: string, flags: CRB.CliFlags) => {
 };
 
 const createConstants = async (projectDir: string, flags: CRB.CliFlags) => {
-  if (!flags.withUser && !flags.withTemplate) return;
+  if (!flags.withUser && !flags.withFile) return;
 
   let constant = '';
 
