@@ -1,15 +1,14 @@
 import ora from 'ora';
 import chalk from 'chalk';
 import fs from 'fs-extra';
-import { execAsync } from '../utils/common';
-import * as seeds from './prisma/seed/index';
+import { ENV } from 'utils/constants';
+import { execAsync, seqPromise } from 'utils/promises';
+import * as seeds from './prisma/seed';
 import * as schema from './prisma/schema';
 import { prismaInstance } from './prisma/seed/instance';
-import { CliFlags } from '../utils/interfaces';
-import { ENV } from '../utils/constants';
 import { userSeeder } from './prisma/seed/user';
 
-const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
+const createPrismaSeeds = async (projectDir: string, flags: CRB.CliFlags) => {
   const spinner = ora('Creating prisma seeds...\n').start();
 
   let seed = '';
@@ -22,7 +21,7 @@ const createPrismaSeeds = async (projectDir: string, flags: CliFlags) => {
   seed += `${seeds.seeder.end}\n`;
 
   try {
-    await Promise.all([
+    await seqPromise([
       fs.writeFile(`${projectDir}/prisma/seed/index.ts`, seed),
       fs.writeFile(`${projectDir}/prisma/seed/user.ts`, userSeeder),
     ]);
@@ -45,7 +44,7 @@ const createPrismaSeedInstance = async (projectDir: string) => {
   }
 };
 
-const createPrismaSchema = async (projectDir: string, flags: CliFlags) => {
+const createPrismaSchema = async (projectDir: string, flags: CRB.CliFlags) => {
   if (!flags.withUser && !flags.withFile) return;
 
   let schemaFile = await fs.readFile(`${projectDir}/prisma/schema.prisma`, 'utf8');
@@ -69,7 +68,7 @@ const createPrismaSchema = async (projectDir: string, flags: CliFlags) => {
   }
 };
 
-const initializePrisma = async (projectDir: string, flags: CliFlags) => {
+const initializePrisma = async (projectDir: string, flags: CRB.CliFlags) => {
   const spinner = ora('Initializing prisma...').start();
 
   try {
@@ -77,7 +76,7 @@ const initializePrisma = async (projectDir: string, flags: CliFlags) => {
 
     await fs.mkdirp(`${projectDir}/prisma/seed`);
 
-    await Promise.all([
+    await seqPromise([
       createPrismaSchema(projectDir, flags),
       createPrismaSeedInstance(projectDir),
       flags.withUser ? createPrismaSeeds(projectDir, flags) : Promise.resolve(),

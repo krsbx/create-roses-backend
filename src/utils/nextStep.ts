@@ -1,8 +1,7 @@
 import { getPackageManager } from './common';
-import { CliFlags } from './interfaces';
 import logger from './logger';
 
-const nextStep = (projectDir: string, flags: CliFlags) => {
+const nextStep = (projectDir: string, flags: CRB.CliFlags) => {
   const packageManager = getPackageManager();
 
   logger.info('Next steps:');

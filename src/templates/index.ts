@@ -1,19 +1,14 @@
-import fs from 'fs-extra';
 import path from 'path';
+import { initializePackages } from 'utils/initializer/packages.initializer';
+import { initializeDirectory } from 'utils/initializer/directory.initializer';
 import { getPackageManager } from '../utils/common';
-import { addPackages, initializeDirectory } from '../utils/initializer';
-import { CliFlags } from '../utils/interfaces';
-import repositorySetting from './repository.setting';
 
-const createProject = async (appName: string, flags: CliFlags) => {
+const createProject = async (appName: string, flags: CRB.CliFlags) => {
   const packageManager = getPackageManager();
   const projectDir = path.resolve(process.cwd(), appName);
 
   await initializeDirectory(appName, projectDir);
-
-  await addPackages(projectDir, packageManager, flags);
-
-  await fs.writeFile(`${projectDir}/repository.setting.ts`, repositorySetting);
+  await initializePackages(projectDir, packageManager, flags);
 
   return projectDir;
 };

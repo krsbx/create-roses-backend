@@ -1,4 +1,4 @@
-export interface CliFlags {
+export type CliFlags = {
   noInstall: boolean;
   noGit: boolean;
   default: boolean;
@@ -6,9 +6,11 @@ export interface CliFlags {
   withTemplate: boolean;
   withUser: boolean;
   withFile: boolean;
-}
+};
 
-export interface CliResults {
+export type CliResults = {
   appName: string;
   flags: CliFlags;
-}
+};
+
+export as namespace CRB;

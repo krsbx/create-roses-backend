@@ -1,14 +1,9 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { COLOR_SCHEME, CREATE_ROSES_BACKEND, DEFAULT_CLI_OPTIONS } from '../utils/constants';
-import packageJson from '../../package.json';
-import logger from '../utils/logger';
-import getAllPrompts from './prompt';
-import checkVersion from './version';
+import { COLOR_SCHEME, CREATE_ROSES_BACKEND, DEFAULT_CLI_OPTIONS } from 'utils/constants';
+import packageJson from '../../../package.json';
 
-const runCli = async () => {
-  checkVersion();
-
+export const createPrompt = () => {
   const cliResults = DEFAULT_CLI_OPTIONS;
   const program = new Command().name(CREATE_ROSES_BACKEND);
 
@@ -31,7 +26,8 @@ const runCli = async () => {
     .parse(process.argv);
 
   const cliProjectName = program.args[0];
-  if (cliProjectName) cliResults.appName = cliProjectName;
+  if (cliProjectName && typeof cliProjectName === 'string' && cliProjectName.trim() !== '')
+    cliResults.appName = cliProjectName;
 
   cliResults.flags = program.opts();
 
@@ -43,20 +39,5 @@ const runCli = async () => {
     };
   }
 
-  try {
-    if (!cliResults.flags.default) {
-      await getAllPrompts(cliResults);
-    }
-  } catch (err) {
-    if (err instanceof Error && (err as any).isTTYError) {
-      logger.error(`${CREATE_ROSES_BACKEND} needs an interactive terminal to provide options`);
-      logger.error(`Bootstrapping a default CRB app in ./${cliResults.appName}`);
-    } else {
-      throw err;
-    }
-  }
-
   return cliResults;
 };
-
-export default runCli;

@@ -1,4 +1,11 @@
-import { CliResults } from './interfaces';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const __filename = fileURLToPath(import.meta.url); // eslint-disable-line no-underscore-dangle
+const distPath = path.dirname(__filename);
+export const PKG_ROOT = path.join(distPath, '../');
 
 export const MINIMUM_NODE_VERSION = 14;
 
@@ -10,7 +17,7 @@ export const CREATE_ROSES_BACKEND = 'create-roses-backend';
 
 export const DESCRIPTIONS = `Project created with ${CREATE_ROSES_BACKEND}`;
 
-export const DEFAULT_CLI_OPTIONS: CliResults = {
+export const DEFAULT_CLI_OPTIONS: CRB.CliResults = {
   appName: DEFAULT_APP_NAME,
   flags: {
     noInstall: false,
