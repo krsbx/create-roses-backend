@@ -1,6 +1,6 @@
+import ora from 'ora';
 import chalk from 'chalk';
 import fs from 'fs-extra';
-import ora from 'ora';
 import { getOverwritePermissions } from 'utils/cli/prompt/overwrite.prompt';
 import { execAsync } from 'utils/promises';
 import logger from 'utils/logger';
