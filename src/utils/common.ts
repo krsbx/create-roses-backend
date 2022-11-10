@@ -1,3 +1,5 @@
+import fs from 'fs-extra';
+
 export const getPackageManager = () => {
   const userAgent = process.env.npm_config_package_manager;
 
@@ -24,4 +26,9 @@ export const parseNameAndPath = (input: string) => {
   const path = paths.filter((p) => !p.startsWith('@')).join('/');
 
   return [appName, path] as const;
+};
+
+export const rmdirAsync = async (path: string) => {
+  await fs.emptyDir(path);
+  await fs.rmdir(path);
 };
