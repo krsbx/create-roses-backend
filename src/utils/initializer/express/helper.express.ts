@@ -25,7 +25,7 @@ export const cleanUpUtils = async (projectDir: string, flags: CRB.CliFlags) => {
 
 export const cleanUpRepository = async (projectDir: string, flags: CRB.CliFlags) => {
   const repositoryRootDir = path.join(projectDir, 'src/repository');
-  const repositoryDir = path.join(projectDir, 'src/repository/index');
+  const repositoryDir = path.join(repositoryRootDir, 'index');
 
   if (flags.withTemplate || (flags.withFile && flags.withUser)) {
     await fs.move(
@@ -42,6 +42,7 @@ export const cleanUpRepository = async (projectDir: string, flags: CRB.CliFlags)
       path.join(repositoryDir, 'withFile.ts'),
       path.join(repositoryRootDir, 'index.ts')
     );
+    await fs.rm(path.join(repositoryRootDir, 'user.ts'));
     await rmdirAsync(repositoryDir);
 
     return;
@@ -52,6 +53,7 @@ export const cleanUpRepository = async (projectDir: string, flags: CRB.CliFlags)
       path.join(repositoryDir, 'withUser.ts'),
       path.join(repositoryRootDir, 'index.ts')
     );
+    await fs.rm(path.join(repositoryRootDir, 'file.ts'));
     await rmdirAsync(repositoryDir);
 
     return;
@@ -65,7 +67,7 @@ export const cleanUpRepository = async (projectDir: string, flags: CRB.CliFlags)
 
 export const cleanUpRoutes = async (projectDir: string, flags: CRB.CliFlags) => {
   const routesRootDir = path.join(projectDir, 'src/routes');
-  const routesDir = path.join(projectDir, 'src/routes/index');
+  const routesDir = path.join(routesRootDir, 'index');
 
   if (flags.withTemplate || (flags.withFile && flags.withUser)) {
     await fs.move(path.join(routesDir, 'withTemplate.ts'), path.join(routesRootDir, 'index.ts'));
@@ -76,6 +78,8 @@ export const cleanUpRoutes = async (projectDir: string, flags: CRB.CliFlags) => 
 
   if (flags.withFile && !flags.withUser) {
     await fs.move(path.join(routesDir, 'withFile.ts'), path.join(routesRootDir, 'index.ts'));
+    await fs.rm(path.join(routesRootDir, 'auth.ts'));
+    await fs.rm(path.join(routesRootDir, 'users.ts'));
     await rmdirAsync(routesDir);
 
     return;
@@ -83,6 +87,7 @@ export const cleanUpRoutes = async (projectDir: string, flags: CRB.CliFlags) => 
 
   if (!flags.withFile && flags.withUser) {
     await fs.move(path.join(routesDir, 'withUser.ts'), path.join(routesRootDir, 'index.ts'));
+    await fs.rm(path.join(routesRootDir, 'files.ts'));
     await rmdirAsync(routesDir);
 
     return;

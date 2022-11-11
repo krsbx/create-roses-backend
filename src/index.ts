@@ -18,17 +18,16 @@ const main = async () => {
   const { appName, flags } = await runCli();
 
   const [scopedAppName, projectPath] = parseNameAndPath(appName);
-  const projectDir = await createProject(appName);
+  const projectDir = await createProject(appName, flags);
 
   await initializeExpress(projectDir, flags);
   await initializePrisma(projectDir, flags);
+  await modifyPackageJson(projectDir, scopedAppName);
 
   if (!flags.noGit) {
     await initializeGit(projectDir);
     await commitChanges(projectDir);
   }
-
-  await modifyPackageJson(projectDir, scopedAppName);
 
   logger.success(`\nProject created at ${projectDir}\n`);
 
