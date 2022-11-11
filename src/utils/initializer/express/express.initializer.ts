@@ -11,7 +11,6 @@ import {
 } from './helper.express';
 
 export const initializeExpress = async (projectDir: string, flags: CRB.CliFlags) => {
-  const rootDir = path.join(PKG_ROOT, 'template');
   const srcDir = path.join(PKG_ROOT, 'template/src');
   const srcDist = path.join(projectDir, 'src');
 
@@ -21,15 +20,6 @@ export const initializeExpress = async (projectDir: string, flags: CRB.CliFlags)
     // Create all the files for the express template
     await fs.mkdir(srcDist);
     await fs.copy(srcDir, srcDist);
-    await fs.copy(path.join(rootDir, '_env'), path.join(projectDir, '.env'));
-    await fs.copy(path.join(rootDir, '_env'), path.join(projectDir, '.env.example'));
-    await fs.copy(
-      path.join(rootDir, 'repository.setting.ts'),
-      path.join(projectDir, 'repository.setting.ts')
-    );
-
-    if (!flags.noGit)
-      await fs.copy(path.join(rootDir, '_gitignore'), path.join(projectDir, '.gitignore'));
 
     // Remove any unnecessary files
     await cleanUpMiddleware(projectDir, flags);

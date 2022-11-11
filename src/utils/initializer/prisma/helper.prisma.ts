@@ -4,7 +4,7 @@ import { rmdirAsync } from 'utils/common';
 
 export const cleanUpSchema = async (projectDir: string, flags: CRB.CliFlags) => {
   const schemaRootDir = path.join(projectDir, 'prisma');
-  const schemaDir = path.join(projectDir, 'prisma/schema');
+  const schemaDir = path.join(schemaRootDir, 'schema');
 
   if (flags.withTemplate || (flags.withFile && flags.withUser)) {
     await fs.move(
@@ -42,7 +42,7 @@ export const cleanUpSchema = async (projectDir: string, flags: CRB.CliFlags) => 
 
 export const cleanUpSeed = async (projectDir: string, flags: CRB.CliFlags) => {
   const seedRootDir = path.join(projectDir, 'prisma/seed');
-  const seedDir = path.join(projectDir, 'prisma/index');
+  const seedDir = path.join(seedRootDir, 'index');
 
   if (flags.withUser) {
     await fs.move(path.join(seedDir, 'withUser.ts'), path.join(seedRootDir, 'index.ts'));
