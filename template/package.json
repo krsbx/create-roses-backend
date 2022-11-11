@@ -1,0 +1,23 @@
+{
+  "name": "my-roses-backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc --project tsconfig.build.json",
+    "dev": "nodemon src/index.ts",
+    "migrate": "prisma migrate dev",
+    "migrate:create": "prisma migrate dev --name",
+    "migrate:reset": "prisma migrate reset",
+    "postmigrate": "prisma-repo --model-structures",
+    "seed": "prisma db seed",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "prisma": {
+    "seed": "ts-node prisma/seed/index.ts"
+  }
+}
