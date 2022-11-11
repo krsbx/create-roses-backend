@@ -3,56 +3,55 @@ import path from 'path';
 import { rmdirAsync } from 'utils/common';
 
 export const cleanUpSchema = async (projectDir: string, flags: CRB.CliFlags) => {
-  const schemaDir = path.join(projectDir, 'prisma');
+  const schemaRootDir = path.join(projectDir, 'prisma');
+  const schemaDir = path.join(projectDir, 'prisma/schema');
 
   if (flags.withTemplate || (flags.withFile && flags.withUser)) {
     await fs.move(
-      path.join(schemaDir, 'schema/withTemplate.prisma'),
-      path.join(schemaDir, 'schema.prisma')
+      path.join(schemaDir, 'withTemplate.prisma'),
+      path.join(schemaRootDir, 'schema.prisma')
     );
-    await rmdirAsync(path.join(schemaDir, 'schema'));
+    await rmdirAsync(schemaDir);
 
     return;
   }
 
   if (flags.withFile && !flags.withUser) {
     await fs.move(
-      path.join(schemaDir, 'schema/withFile.prisma'),
-      path.join(schemaDir, 'schema.prisma')
+      path.join(schemaDir, 'withFile.prisma'),
+      path.join(schemaRootDir, 'schema.prisma')
     );
-    await rmdirAsync(path.join(schemaDir, 'schema'));
+    await rmdirAsync(schemaDir);
 
     return;
   }
 
   if (!flags.withFile && flags.withUser) {
     await fs.move(
-      path.join(schemaDir, 'schema/withUser.prisma'),
-      path.join(schemaDir, 'schema.prisma')
+      path.join(schemaDir, 'withUser.prisma'),
+      path.join(schemaRootDir, 'schema.prisma')
     );
-    await rmdirAsync(path.join(schemaDir, 'schema'));
+    await rmdirAsync(schemaDir);
 
     return;
   }
 
-  await fs.move(
-    path.join(schemaDir, 'schema/default.prisma'),
-    path.join(schemaDir, 'schema.prisma')
-  );
-  await rmdirAsync(path.join(schemaDir, 'schema'));
+  await fs.move(path.join(schemaDir, 'default.prisma'), path.join(schemaRootDir, 'schema.prisma'));
+  await rmdirAsync(schemaDir);
 };
 
 export const cleanUpSeed = async (projectDir: string, flags: CRB.CliFlags) => {
-  const seedDir = path.join(projectDir, 'prisma/seed');
+  const seedRootDir = path.join(projectDir, 'prisma/seed');
+  const seedDir = path.join(projectDir, 'prisma/index');
 
   if (flags.withUser) {
-    await fs.move(path.join(seedDir, 'index/withUser.ts'), path.join(seedDir, 'index.ts'));
-    await rmdirAsync(path.join(seedDir, 'index'));
+    await fs.move(path.join(seedDir, 'withUser.ts'), path.join(seedRootDir, 'index.ts'));
+    await rmdirAsync(seedDir);
 
     return;
   }
 
-  await fs.move(path.join(seedDir, 'index/default.ts'), path.join(seedDir, 'index.ts'));
-  await fs.rm(path.join(seedDir, 'user.ts'));
-  await rmdirAsync(path.join(seedDir, 'index'));
+  await fs.move(path.join(seedDir, 'default.ts'), path.join(seedRootDir, 'index.ts'));
+  await fs.rm(path.join(seedRootDir, 'user.ts'));
+  await rmdirAsync(seedDir);
 };

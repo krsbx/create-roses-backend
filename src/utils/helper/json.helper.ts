@@ -1,14 +1,13 @@
 import ora from 'ora';
 import chalk from 'chalk';
 import fs from 'fs-extra';
-import { DESCRIPTIONS, PRSIMA } from 'utils/constants';
+import { DESCRIPTIONS } from 'utils/constants';
 
 export const modifyPackageJson = async (projectDir: string, appName: string) => {
   const packageJson = await fs.readJSON(`${projectDir}/package.json`);
 
   packageJson.name = appName;
   packageJson.description = DESCRIPTIONS;
-  packageJson.prisma = PRSIMA;
 
   const spinner = ora(`Updating package.json...\n`).start();
 

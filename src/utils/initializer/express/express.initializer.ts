@@ -11,8 +11,8 @@ import {
 } from './helper.express';
 
 export const initializeExpress = async (projectDir: string, flags: CRB.CliFlags) => {
-  const rootDir = path.join(PKG_ROOT, 'templates');
-  const srcDir = path.join(PKG_ROOT, 'templates/src');
+  const rootDir = path.join(PKG_ROOT, 'template');
+  const srcDir = path.join(PKG_ROOT, 'template/src');
   const srcDist = path.join(projectDir, 'src');
 
   const spinner = ora(`Initializing express...`).start();

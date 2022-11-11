@@ -2,7 +2,6 @@ import ora from 'ora';
 import chalk from 'chalk';
 import fs from 'fs-extra';
 import { getOverwritePermissions } from 'utils/cli/prompt/overwrite.prompt';
-import { execAsync } from 'utils/promises';
 import logger from 'utils/logger';
 
 const overwriteDirConfirmation = async (appName: string, projectDir: string) => {
@@ -37,6 +36,4 @@ export const initializeDirectory = async (appName: string, projectDir: string) =
   } else {
     await fs.mkdirp(projectDir);
   }
-
-  await execAsync('npm init -y', { cwd: projectDir });
 };
