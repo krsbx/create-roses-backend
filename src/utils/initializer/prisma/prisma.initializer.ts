@@ -6,7 +6,7 @@ import { PKG_ROOT } from 'utils/constants';
 import { cleanUpSchema, cleanUpSeed } from './helper.prisma';
 
 export const initializePrisma = async (projectDir: string, flags: CRB.CliFlags) => {
-  const prismaDir = path.join(PKG_ROOT, 'templates/prisma');
+  const prismaDir = path.join(PKG_ROOT, 'template/prisma');
   const prismaDist = path.join(projectDir, 'prisma');
 
   const spinner = ora('Initializing prisma...').start();

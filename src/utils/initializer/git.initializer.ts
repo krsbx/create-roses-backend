@@ -1,8 +1,6 @@
 import chalk from 'chalk';
 import ora from 'ora';
-import fs from 'fs-extra';
 import { execAsync } from 'utils/promises';
-import { GIT_IGNORE } from 'utils/constants';
 
 export const initializeGit = async (projectDir: string) => {
   const spinner = ora('Initializing git...\n\n').start();
@@ -24,9 +22,6 @@ export const initializeGit = async (projectDir: string) => {
 
     await execAsync(initCmd, { cwd: projectDir });
     spinner.succeed(chalk.green.bold('Git initialized.'));
-
-    // Create .gitignore file
-    await fs.writeFile(`${projectDir}/.gitignore`, GIT_IGNORE);
   } catch {
     spinner.fail(chalk.red.bold('Failed to initialize Git. Please update git to continue.'));
   }
