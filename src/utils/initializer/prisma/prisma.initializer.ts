@@ -7,19 +7,22 @@ import { cleanUpSchema, cleanUpSeed } from './helper.prisma';
 
 export const initializePrisma = async (projectDir: string, flags: CRB.CliFlags) => {
   const prismaDir = path.join(PKG_ROOT, 'templates/prisma');
+  const prismaDist = path.join(projectDir, 'prisma');
 
   const spinner = ora('Initializing prisma...').start();
 
   try {
     // Create all the files for the prisma template
-    await fs.copy(prismaDir, projectDir);
+    await fs.mkdir(prismaDist);
+    await fs.copy(prismaDir, prismaDist);
 
     // Remove any unnecessary files
     await cleanUpSchema(projectDir, flags);
     await cleanUpSeed(projectDir, flags);
 
     spinner.succeed(chalk.green.bold('Prisma initialized.'));
-  } catch {
+  } catch (e) {
+    console.log(e);
     spinner.fail(chalk.red.bold('Prisma initialization failed.'));
   }
 };

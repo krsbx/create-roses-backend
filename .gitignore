@@ -1,5 +1,6 @@
 node_modules
 dist
+create-roses-backend-*.tgz
 
 # The test folder for creating a new project
 @krsbx/crb
