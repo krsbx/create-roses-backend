@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import ora from 'ora';
+import { isGitMainPossible } from 'utils/helper/git.helper';
 import { execAsync } from 'utils/promises';
 
 export const initializeGit = async (projectDir: string) => {
@@ -10,15 +11,9 @@ export const initializeGit = async (projectDir: string) => {
   try {
     // --initial-branch flag was added in git v2.28.0
     // ref: https://github.com/t3-oss/create-t3-app/blob/main/src/helpers/initGit.ts
-    const { stdout: gitVersionOutput } = await execAsync('git --version'); // git version 2.32.0 ...
-    const gitVersionTag = gitVersionOutput.split(' ')[2];
+    const isInitMainPossible = await isGitMainPossible();
 
-    const major = gitVersionTag?.split('.')[0];
-    const minor = gitVersionTag?.split('.')[1];
-
-    if (Number(major) < 2 || Number(minor) < 28) {
-      initCmd = 'git init && git branch -m main';
-    }
+    if (!isInitMainPossible) initCmd = 'git init';
 
     await execAsync(initCmd, { cwd: projectDir });
     spinner.succeed(chalk.green.bold('Git initialized.'));

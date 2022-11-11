@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import _ from 'lodash';
-import asyncMw from 'express-asyncmw';
+import { asyncMw } from 'express-asyncmw';
 import repository from '../repository';
 import { multerFileHandler } from '../utils/files';
 
