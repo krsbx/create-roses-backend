@@ -9,7 +9,7 @@ export const createPrompt = () => {
 
   program
     .description('A CLI for creating a new Roses Backend')
-    .argument('[dir]', 'The directory to create the new Roses Backend in')
+    .argument('[dir]', 'The directory to create the new Roses Backend')
     .option('--noGit', 'Explicitly tell to not init a git repository', false)
     .option('--noInstall', 'Explicitly tell to not install all dependencies', false)
     .option('--withTemplate', 'Explicitly tell to use all templates', false)
