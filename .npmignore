@@ -5,5 +5,5 @@
 .prettierrc.js
 /src
 commitlint.config.ts
-tsconfig.json
+/tsconfig.json
 create-roses-backend-*.tgz
