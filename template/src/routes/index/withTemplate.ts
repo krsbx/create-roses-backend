@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import authsRoutes from './auths';
+import authsRoutes from './auth';
 import filesRoutes from './files';
 import usersRoutes from './users';
 
